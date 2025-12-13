@@ -27,5 +27,13 @@ gLM은 DNA 염기서열(A, C, G, T)을 단어처럼 토큰화하여 학습하는
 모델의 임베딩 표현이 작은 변이에 민감한(gLM variant-sensitive) 특성을 가지도록 설계하는 것이 핵심 과제입니다.
 
 🔹 모든 서열의 임베딩 벡터는 동일한 차원을 가져야 하며, 최대 2,048 차원 수로 제한
+
 리더보드
 평가 산식 CD (Cosine Distance) : 각 reference–variant 쌍의 임베딩 벡터 간 코사인 거리의 평균값 CDD (Cosine Distance Difference) : 병적(Pathogenic) 변이와 양성(Benign) 변이 간의 평균 코사인 거리 차이 PCC (Pearson Correlation Coefficient) : 각 reference 서열에 대해 변이 개수 증가에 따른 피어슨 상관계수
+<img width="502" height="74" alt="image" src="https://github.com/user-attachments/assets/5e082565-6cfb-4503-a4ab-3ecc3a632ee9" />
+
+Public score : 전체 테스트 데이터 중 사전 샘플링된 30% Private score : 전체 테스트 데이터 100%
+
+평가 방식
+1차 평가 : 리더보드 Private Score 상위 6팀 선발 2차 평가 : Private Score 상위 6팀 대상 코드 및 PPT 제출 후 코드 검증 및 오프라인 발표 평가 진행 2차 평가 기준 
+<img width="541" height="94" alt="image" src="https://github.com/user-attachments/assets/a9a3ac0b-d2a9-446c-9e73-5082eb53c28d" />

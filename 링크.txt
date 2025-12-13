@@ -1,0 +1,3 @@
+https://catalog.us-east-1.prod.workshops.aws/workshops/4946ffd9-cee8-4c32-a982-d983d1768890/ko-KR
+https://ewhawomansuniversity-086374d2.mintlify.app/introduction/readme
+https://docs.google.com/presentation/d/1QkfwN6bPPoisjt5-a_bYIkfRVT0N2nKOuR1eTqTwUs8/edit?usp=drivesdk

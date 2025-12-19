@@ -1,0 +1,182 @@
+---
+title: "Untitled"
+output: html_document
+date: "2025-12-04"
+---
+
+## 제거 
+### Anaconda 제거(선택사항)
+* 아나콘다 제거: 깔끔하게 제거되지 않을 수 있음. 약 30 GB(tf포함)
+* 개인용(권장)이면 C:/Users/hhog/anaconda3, 전체용이면 C:/ProgramData/anaconda3에 설치됨. 개인용 설치 권장
+* C:/Users/hhog/anaconda/envs나 pkgs 폴더는 미리 제거할 것
+* 윈도우 제어판의 프로그램 제거로 아나콘다 제거
+* 또는 conda로 제거
+
+```
+conda install anaconda-clean
+anaconda-clean --yes   # 사용자파일은 C:/Users/hhog/.anaconda_backup 에 백업됨
+```
+
+### R/RStudio 제거 
+* 제어판 > 프로그램 제거 Rtools, Rstudio, R 제거
+* 다음은 선택사항 (이전 설치된 패키지나 데이터등을 완전히 삭제하려면 실행)
+    * 참고: AppData는 숨겨진 폴더이므로 보기 > 숨겨진 항목을 체크해야 보임
+    * C:/Users/hhog/Documents 또는 내PC > 문서에서 .RData, .Rhistory 제거 
+    * C:/Users/hhog/AppData/Local 안의 R, r-miniconda, r-reticulate, RStudio 등 제거
+    * C:/Users/hhog/AppData/Roaming/RStudio 제거
+    * C:/Program Files/R, C:/Program Files/RStudio, C:/rtools43 확인 후 남아있으면 폴더 제거
+    
+
+&nbsp;|4.2.x: C:/Users/hhog/Documents에 설치됨|4.3.x: C:/Users/hhog/AppData에 설치됨
+:--------------|:--------------------|:--------------------
+사용자 데이터(.RData) 저장위치|C:/Users/hhog/Documents|C:/Users/hhog/Documents
+사용자 설치패키지 위치|C:/Users/hhog/Documents/R/win-library|C:/Users/hhog/AppData/Local/R/win-library
+
+
+## 설치 
+
+### 다운로드:
+* miniconda 최신버전
+* R download 검색: R 4.5.2 (R-4.5.2-win.exe) 
+* Rstudio download, 또는 RStudio Desktop download 검색: RStudio-2025.09.2-418.exe
+* RTools  검색: Rtools45 installer 다운받아 설치(C:\rtools45, rtools45-6691-6492.exe). R패키지 컴파일을 위한 C 컴파일러 
+
+### miniconda 설치
+* 이전 설치는 제거
+* miniconda 다운로드 (Miniconda3-latest-Windows-x86_64.exe)
+* 설치 (Just Me로 설치하면 C:/Users/hhog/miniconda3에 설치됨). 작업표시줄에 Anaconda prompt (miniconda) 고정. 사용방법은 동일
+* r-reticulate 환경 생성하고 jupyter notebook과 일반 패키지 먼저 설치
+* miniconda설치시 [PATH를 추가]를 체크 
+* C:\Users\hhog\AppData\Local\r-miniconda\envs\r-reticulate\python 또는 
+
+#### 사후 처리
+* pip, conda는 파이썬 패키지를 설치하는 유틸리티.
+
+| 특징 | pip  | conda |
+|:---------|:---------|:-----------|
+| 패키지 관리 | PyPI(Python Package Index)에서 Python 패키지를 설치 및 관리 | Anaconda 환경에서 Python 패키지와 비-Python 패키지를 설치 및 관리 |
+| 환경 관리   | 별도의 도구 (virtualenv, venv)로 가상 환경 관리 | 자체 가상 환경 관리 기능 내장 |
+| 속도        | 더 빠른 설치 및 업데이트 | 다소 느린 설치 및 업데이트 (다운로드 속도와 패키지 크기에 따라 다름) |
+| 의존성 관리 | 의존성 충돌 해결이 어려울 수 있음 | 의존성 관리 및 해결에 강점 |
+| 사용성      | Python 패키지 설치에 주로 사용 | 데이터 과학, 머신러닝 등 다양한 분야에서 유용 |
+| 범용성      | Python에 특화 | Python 및 비-Python 패키지 모두 관리 가능 |
+| 패키지 소스 | PyPI | Anaconda Repository, conda-forge 등 |
+| 설치 용량   | 일반적으로 작은 설치 용량 | 다소 큰 설치 용량 (Anaconda 환경 포함 시) |
+
+
+* conda 가상환경 생성
+    * r-reticulate: tf 포함한 모든 데이터 분석 패키지 설치. ts도 포함
+	* pt: pt용
+	* ts: 통상적인 시계열 분석용
+	* nix: nixtla용 (pt가 같이 설치됨)
+
+```
+# Anaconda Prompt에서 
+(base) python --version                            # 현재 base에 설치된 파이썬 버전
+(base) conda update -n base -c defaults conda 
+(base) conda env list                              # 가상환경 리스트. 최초 base만 있음
+(base) conda create -n r-reticulate python=3.11.11 # 파이썬 특정버전으로 가상환경 생성. 
+# 리포사용시 동의 화면 때문에 install_miniconda로 설치 안되는 듯 => conda install jupyter 시 동의여부 물어봄
+Do you accept the Terms of Service (ToS) for https://repo.anaconda.com/pkgs/main? [(a)ccept/(r)eject/(v)iew]: a
+Do you accept the Terms of Service (ToS) for https://repo.anaconda.com/pkgs/r? [(a)ccept/(r)eject/(v)iew]: a
+Do you accept the Terms of Service (ToS) for https://repo.anaconda.com/pkgs/msys2? [(a)ccept/(r)eject/(v)iew]: a
+
+
+(base) conda activate r-reticulate                 # 가상환경 시작. 프롬프트가 바뀜 
+(r-reticulate) python --version #                  # base의 버전과 다름  
+(r-reticulate) conda install conda                 # 콘다 설치 
+(r-reticulate) python -m pip install --upgrade pip # pip 설치 
+
+# nixtla를 함께 설치해보기로 함
+conda install jupyter    # jupyter notebook 관련 패키지 일괄 설치
+
+# pip으로 설치하면 버전 충돌 위험 있음. conda 설치 오류시 pip 설치 권장
+# pip install statsforecast[plotly] 
+# pip install mlforecast 
+# pip install neuralforecast
+# pip install timegpt
+# pip install nixtla
+
+conda install statsforecast[plotly] -c conda-forge   # np, pd, matplotlib, plotly, statsmodels
+conda install mlforecast -c conda-forge              # sk, optuna, sqlalchemy 등 설치치
+conda install neuralforecast -c conda-forge          # google, networkx, pt(2.8 cpu) pt-lightning
+conda install hierarchicalforecast -c conda-forge    # quadprog
+conda install utilsforecast -c conda-forge           # 이미 설치됨 
+conda install coreforecast  -c conda-forge           # 이미 설치됨
+pip install timegpt                                  # conda install timegpt  -c conda-forge   
+pip install nixtla                                   # conda install nixtla  -c conda-forge
+pip install datasetsforecast                         # conda install datasetsforecast -c conda-forge
+conda install sktime-all-extras -c conda-forge       # 충돌 위험 확인하면서 설치할 것.statsmodel,boke,prophet,dask등 설치
+
+
+```
+
+* 참고
+    * `r-reticulate`: 일반적인 분석 또는 nixtla를 사용하면 낮은 버전들로 설치되므로 nixtla 설치 
+    * `ts`: 시계열용 패키지
+    * `tf`: tf용
+    * `pt`: pt용
+
+* 필요한 패키지 설치 1: tf 설치 .별도 설치할 것
+    * 주의: W10에서 tfgpu 사용못함. W10 tfgpu 2.10까지 gpu 지원. 2.11부터는 WSL용만 지원
+    * 윈도우에서 gpu사용하려면 1) docker를 사용하거나, 2) WSL를 사용
+    * tf2.10까지만 지원, 2.11부터는 WSL용만 지원 
+
+```
+pip install tensorflow   # tf 2.20 설치됨. gpu가 없으면 pip으로 가장 최신 cpu 버전 설치하면 됨 
+```
+
+* 필요한 패키지 설치 2: numpy, matplotlib, seaborn, scikit-learn, pandas
+
+```
+(r-reticulate) # conda install numpy     # tf와 충돌방지위해 설치 자제 
+(r-reticulate) conda install matplotlib    
+(r-reticulate) conda install seaborn       
+(r-reticulate) conda install scikit-learn  
+(r-reticulate) conda install pandas        
+(r-reticulate) conda install sktime-all-extras -c conda-forge 
+(r-reticulate) conda install pmdarima 
+(r-reticulate) conda install prophet  # sktime에서 이미 설치한 상태
+
+```
+
+
+
+
+
+
+
+
+* miniconda를 개인용으로 설치
+* conda create -n r-reticulate python=3.11
+
+conda install notebook
+conda install pandas
+conda install numpy
+conda install matplotlib
+conda install seaborn
+conda install statsmodels
+conda install sktime[all_extras] -c conda-forge
+
+
+
+
+
+
+### R 설치
+### Rstudio 설치
+### Rtools 설치
+
+
+
+
+
+```{r}
+library(reticulate)
+use_condaenv('r-reticulate')  # use_condaenv('base')
+
+```
+
+```{python}
+print('Hello')
+```

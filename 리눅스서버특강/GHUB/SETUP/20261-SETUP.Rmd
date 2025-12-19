@@ -1,0 +1,3709 @@
+---
+title: '20261-SETUP summary'
+output: 
+  html_document:
+    anchor_sections: TRUE # default is FALSE
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+    theme: yeti
+    highlight: kate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    #number_sections: true
+    df_print: paged
+    #code_folding: show
+---
+
+
+
+```{css, echo=FALSE}
+.main-container {
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+@font-face {
+  font-family: 'Noto Sans KR' ;
+  font-style: normal;
+  font-weight: 400;
+}
+
+/* Headers 
+
+https://en.wikipedia.org/wiki/List_of_Unicode_characters: bullets dingbats
+*/
+
+h1:before{
+  # content:'\25A8';  '\25A0'; # No bullet
+  margin:0 10px  
+} 
+
+h2:before{
+  content: '\25A0'; # '\25FC'; # =&FilledSmallSquare; Black Medium Square '\25A0'(Black Square);  
+  margin:0 10px  
+}
+
+h3:before{
+  content: '\274F'; # '\25CF';  #'\25C6'(Black Diamond);  
+  margin:0 10px  
+}
+
+h4:before{
+  content: '\274D'; #'\29BF'; # = ofcir '\25CA'; #'\2023';  #'\25C6';  
+  margin:0 10px  
+}
+
+h5:before{
+  content: '\25C6'; # '\25CF'; #'\2023'; # 25E6 ;  #'\25FE' '\25C6';  
+  margin:0 10px  
+}
+
+h6:before{
+  content: '\25CF'; # '\25CF'; #'\2023'; # 25E6 ;  #'\25FE' '\25C6';  
+  margin:0 10px  
+}
+
+  
+  
+h1 {font-size: 25px; color:#000000; font-family:'Consolas','Noto Sans KR' ; font-weight:900} /*Black*/
+h2 {font-size: 23px; color:#00008B; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} /*DarkBlue*/
+h3 {font-size: 20px; color:#800000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} /*Maroon*/
+h4 {font-size: 20px; color:#800000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} /*Orange*/
+h5 {font-size: 18px; color:#000000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} 
+
+h6 {font-size: 18px; color:#000000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} 
+
+pre,
+code {
+  font-family: 'Consolas',Menlo, Monaco, 'Courier New', monospace, '바탕체';
+}
+
+body {
+  line-height: 1.85; # line-height: 1.85;
+}
+li {line-height: 1.85;}
+
+
+# th,td{padding:50px;} # 35px 50px 35px 50px;} # Rmd에서 효과없음  
+# <script>document.write( document.lastModified );</script>  
+```
+
+
+# Basics
+
+* AI-Hub.html 참고
+
+## Hardware
+* [Hardware](20261-Hardware.html)
+* ![HP840-mb.png](HP840-mb.png)
+
+### Mainboard
+### CPU
+#### PC CPU
+#### Server CPU
+### RAM
+#### PC
+#### ECC
+### Storage
+#### HDD
+#### SSD
+#### Nvme
+### PCIe
+#### GPU
+### NIC
+
+## OS
+* [OS](20261-OS.html)
+* ![Simple History of OS](Simple History of OS.webp)
+
+### Unix/Linux
+### MS
+### Mac
+### etc
+
+
+## Network
+* [Network](20261-Network.html)
+
+### IP
+* "Public IP는 1개만 있고 여러 대의 컴퓨터로 내부망을 구성하고 인터넷을 써야 하고, 내부망 구성 컴퓨터들은 Static IP를 가져야 하는 상황" => 1개의 Public (Static, Dynamic 상관없음) IP + 여러 개의 Private Static IP
+
+
+* IP 주소 구분
+  * Static vs Dynamic: IP 주소 할당 방식의 차이 (고정 vs 자동).  
+  * Public vs Private: IP 주소 사용 범위의 차이 (외부망 vs 내부망).  
+
+
+| 구분| 할당 방식(고정/자동)|사용 범위 (내부/외부)| 특징 |
+|:--------|:--------------------|:--------------------|:--------------------------------------|
+| Static IP | 고정 (관리자가 직접 설정) | 내부 또는 외부 모두 가능 | 항상 동일한 IP, 서버·프린터 등 고정 필요 장치에 사용 |
+| Dynamic IP| 자동 (DHCP 서버 할당)   | 내부 또는 외부 모두 가능 | 시간이 지나면 변경 가능, 일반 사용자 PC·모바일 |
+| Public IP | ISP가 제공 (고정/자동 모두 가능) | 인터넷 전체에서 유효 | 외부에서 직접 접근 가능, 웹 서버·클라우드 서비스|
+| Private IP| 고정 또는 자동 모두 가능 | 내부 네트워크에서만 유효 |외부 직접 접근 불가, NAT/포트포워딩 필요, 가정·기업 내부망<br>10.0.0.0 ~ 10.255.255.255<br>172.16.0.0 ~ 172.31.255.255<br>192.168.0.0 ~ 192.168.255.255|
+
+* IP 주소 구분 표
+
+|        | Public IP (외부망)       | Private IP (내부망)            |
+|:-------|:-----------------------------|:-----------------------------------|
+| Static IP | ISP 또는 관리자가 고정 설정한 공인 IP<br>예: 웹 서버, 클라우드 서비스 | 관리자가 내부망에서 고정 설정한 사설 IP<br>예: 사내 서버, NAS, 프린터 |
+| Dynamic IP| ISP가 DHCP로 자동 할당하는 공인 IP<br>예: 가정용 인터넷, 모바일 데이터 | 내부 DHCP 서버가 자동 할당하는 사설 IP<br>예: 가정/기업 내부 PC, IoT 기기 |
+
+
+
+
+* 주요 환경별 내부망 IP 기본값(사설망 대역)
+
+| 환경 |기본 내부망 IP 대역 | 특징 |
+|:------|:-------------|:----------------------------|
+| WSL1 | 별도 내부망 없음 | Windows와 동일 네트워크 스택 공유, IP 따로 할당되지 않음 |
+| WSL2 | 동적 할당 (`172.16.x.x ~ 172.31.x.x`) | Hyper-V 기반 NAT 네트워크, 실행 시마다 IP가 바뀜. W11(host)가 게이트웨이 역할 |
+| Docker (Linux) | `172.17.0.0/16` |브리지(docker0=172.17.0.1,subnet=172.17.0.0/16)에서 컨테이너(172.17.0.2~)에 할당|
+| k8s (CNI) | Pod: `10.244.0.0/16` (Flannel)<br>Service: `10.96.0.0/12` | CNI 플러그인에 따라 다르며, 클러스터 생성 시 설정 가능 |
+| vbox (NAT 모드) | VM 기본 IP: `10.0.2.15`<br>게이트웨이: `10.0.2.2` | NAT 모드에서 항상 동일한 기본값, 포트포워딩으로 외부 접근 가능 |
+
+
+
+### Ports
+
+* 포트(Port): 네트워크 포트. 하나의 IP 주소 내에서 여러 개의 서비스(프로그램/프로세스)를 구분하기 위한 논리적 번호
+    * IP 주소가 건물 주소라면, 포트 번호는 그 건물 안의 특정 방 번호
+    * 16비트 숫자(0~65535). 통신시 연결할 앱을 식별
+    * 클라이언트는 임시 포트(Ephemeral) 사용, 서버는 서비스용 포트(Well-Known/Registered) 사용
+    * 예: 웹 브라우저(클라이언트)는 임시 포트 `55000`을 열고, 서버의 `443(HTTPS)` 포트로 접속
+    
+
+* 포트 구분 
+
+
+* 대표적인 포트 번호
+
+| 범위      |포트|서비스 | 설명 |
+|:------------|:-----|:----------|:-------------------|
+| Well-Known Ports (0–1023) | 22 | SSH(Secure SH)| 보안 원격 접속 |
+| 표준 서비스용| 25 | SMTP | 메일 전송 |
+| | 53 | DNS | 도메인 이름 시스템 |
+| | 80 | HTTP | 웹 서비스 기본 포트 |
+| | 443 | HTTPS | 보안 웹 서비스 |
+| Registered Ports (1024–49151) | 1433 | MS SQL Server | 데이터베이스 서버 |
+| 특정 앱용| 3306 | MySQL | 데이터베이스 서버 |
+| | 5432 | PostgreSQL | 데이터베이스 서버 |
+| | 27017 | MongoDB | NoSQL 데이터베이스 기본 포트 |
+| | 3000 | Grafana, Node.js 앱 | 모니터링/웹 앱 |
+| | 3389 | RDP (Remote Desktop) | 원격 데스크톱 |
+| | 7860 | Gradio | 머신러닝 데모용 웹 인터페이스 |
+| | 8501 | Streamlit | Python 웹 앱 프레임워크 |
+| | 8787 | RStudio Server | 웹 기반 R 개발 환경 |
+| | 8888 | Jupyter Notebook | 데이터 과학용 웹 인터페이스 |
+| | 9090 | Prometheus, Cockpit | 모니터링/서버 관리 |
+| | 8080 | Tomcat/Proxy | 대체 HTTP 포트 |
+| | 4822 | Apache Guacamole | 원격 데스크톱 게이트웨이 |
+| Dynamic/Ephemeral Ports <br>(49152–65535) ||웹 브라우저, API 호출 | 클라이언트가 서버와 연결할 때 열리는 임시 포트<br>세션 종료 시 반환됨 |
+
+
+
+
+### SSH 보안 강화 예시
+
+
+| 내용 | 명령/설정 예시 | 효과 |
+|:---------|:--------------------|:-------------|
+| 1. 기본 포트 변경 | /etc/ssh/sshd_config에 `Port 2222`| 자동화된 스캐닝 공격 회피, 로그 노이즈 감소 |
+| 2. 루트 계정 직접 로그인 금지 |/etc/ssh/sshd_config에 `PermitRootLogin no` | 루트 계정 공격 차단, 일반 계정 → sudo 사용 |
+| 3. 비밀번호 로그인 비활성화 |/etc/ssh/sshd_config에<br> `PasswordAuthentication no`<br>`PubkeyAuthentication yes` | 무차별 대입 공격 방지, 키 기반 인증만 허용 |
+| 4. 공개키 인증 설정 | `ssh-keygen -t ed25519` 후 공개키를 `~/.ssh/authorized_keys`에 등록 | 강력한 인증, 비밀번호 노출 위험 제거 |
+| 5. Fail2ban 설치 및 설정 | `sudo apt install fail2ban` | 로그인 실패 횟수 초과 시 IP 자동 차단 |
+| 6. 방화벽 설정 | `sudo ufw allow from 203.0.113.5 to any port 2222` | 특정 IP만 접근 허용, 불필요한 외부 접근 차단 |
+| 7. VPN 또는 Jump Host 사용 | VPN/Bastion Host 통해서만 SSH 허용 | 외부 직접 접근 불가, 내부망만 허용 |
+| 8. 최신 보안 업데이트 적용 | `sudo apt update && sudo apt upgrade` | 알려진 취약점 방지, 최신 보안 패치 유지 |
+
+---
+
+
+
+
+### 네트워크 장비
+
+* 네트워크 장비: OSI 7계층 중 특정 계층에서 동작하며, 데이터 전송·연결·제어 기능을 담당하는 HW 또는 SW
+* 주요 장비 
+
+|장비|OSI | 주요 기능 |
+|:---|:---|:----------|
+|리피터 (Repeater) | L1 물리 계층 |단순 신호 증폭·재생산, 전송 거리 확장
+|허브 (Hub) | L1 물리 계층|단순 연결 장치, 입력 신호를 모든 포트로 브로드캐스트. 거의 안씀 
+|브릿지 (Bridge) | L2 데이터링크 계층 |네트워크 세그먼트 연결, MAC 주소 기반 필터링·전달. NAT 없이 단순 스위치 역할 |
+|스위치 (Switch, L2)| L2 데이터링크 계층 | MAC 주소 기반 패킷 전달, 충돌 도메인 분리. 공유기의 LAN 포트 |
+|스위치 (L3)| L3 네트워크 계층 | IP 주소 기반 라우팅 기능 포함, VLAN 간 통신 지원. NAT기능 없음|
+|스위치 (L4)| L4 전송 계층 | TCP/UDP 포트 기반 트래픽 제어, QoS·로드밸런싱. 공유기에 기능 없음  |
+| 라우터 (Router, Gateway)|L3 네트워크 계층 | 서로 다른 네트워크 연결(WAN과 LAN 연결결), IP 주소 기반 경로 선택·라우팅
+|공유기 (Home Gateway)|L3+L2+L1 통합 |라우터+스위치+무선AP+NAT+DHCP+방화벽, 가정/소규모 네트워크 중심 장치 |
+* 라우팅(경로 탐색) vs NAT(주소 변환)
+
+### 공유기 
+* 하나의 인터넷 회선을 여러 기기에 나누어 제공. 가정용, 소규모 네트워크 통합 장비
+* 공유기 = 라우터(WAN<=>LAN) + (L2)스위치(LAN 포트 4개) + 무선AP 기능 + DHCP 서버 + NAT 
+* 공유기 사용 목적
+    * 인터넷 사용: NAT로 처리. 인터넷 사용하려면 공인 IP가 필요한데 공인 IP 1개지만 사설 IP로 여러대를 연결하고 인터넷을 사용할 수 있도록 주소를 변환
+    * 사설 IP 할당 자동화: DHCP 기능
+    
+    * 허브는 이제 사용 안함 
+    * 브릿지(MAC기반 필터링)도 이제 거의 없음. 공유기의 무선 AP기능에 해당
+    * 
+
+| 기능 | OSI| 설명 |
+|:-----|:----|:------------------|
+| 라우터 기능|L3 네트워크 계층 | WAN과 LAN을 연결, 데이터 패킷 경로 선택 |
+| 스위치 기능|L2 데이터링크 계층 | 여러 기기를 동시에 연결, MAC 주소 기반 트래픽 분배 |
+| 무선 AP 기능 | L1~L2 | 유선을 무선(Wi-Fi)으로 변환, 스마트폰·노트북 연결 지원 |
+| NAT (Network Address Translation) | L3 | 사설 IP <=> 공인 IP 변환, 여러 기기가 하나의 공인 IP로 인터넷 사용 가능. 주소 부족 문제 해결. 높은 보안성(외부 접근 차단)<br>주로 PAT(Port Address Translation)방식 사용(포트 번호를 기준으로 기기를 구분)|
+| DHCP (Dynamic Host Configuration Protocol) | L3/L4 | 내부 기기에 자동으로 IP 주소·서브넷·게이트웨이·DNS 할당 |
+| 방화벽 기능 | L3~L4 | 기본적인 패킷 필터링, 포트포워딩, DMZ 설정 등을 통해 외부 공격 차단|
+
+
+#### 공유기 허브(/브릿지/스위치) 모드 
+
+* ISP => 공유기 1번(NAT, DHCP기능) => 공유기 2번 (라우팅(NAT/DHCP) 기능 끄고 단순 내부망 브릿지로 사용)
+* (vm 구성): IP => 우분투=공유기 1번 => 우분투에 가상 브릿지 추가(공유기 2번) => vm연결 
+    * 내부망 구성 + 고정 IP 할당 + 외부망 접속은 포트포워딩 
+    * 이중 NAT 문제를 방지하고, 네트워크 관리가 단순해짐. 
+
+* 공유기 라우터 모드 vs 허브 모드 비교
+
+|구분| 라우터 모드 | 허브(브릿지/AP) 모드 |
+|:---|:------------|:----------------
+| 목적|단독 인터넷 게이트웨이(WAN-LAN연결. NAT/DHCP)|내부망 확장, 이중 NAT 방지, 무선 커버리지 확장. 외부망은 상위 라우터가 담당 |
+| NAT | On: 사설 IP <=> 공인 IP 변환 | Off: NAT 사용 안함 |
+| DHCP| On: 내부 장치에 IP 자동 할당 | Off: 상위 라우터가 IP 할당 |
+| 기본 게이트웨이| 공유기 자체가 게이트웨이 역할 |상위 라우터가 게이트웨이 역할 |
+| WAN 포트 |사용 (ISP 모뎀 연결) |사용하지 않음, LAN <=> LAN 연결 |
+| 내부망 관리| 공유기가 독립적으로 관리 |상위 라우터가 전체 관리 |
+| 포트포워딩 | 공유기에서 직접 설정 | 상위 라우터에서 설정 필요 |
+| 무선 기능 | 독립된 SSID 제공 가능 | 상위 라우터와 같은 네트워크 확장용 SSID 제공 |
+
+
+
+#### 포트포워딩
+* NAT의 활용방식 중 들어오는 방향(Destination NAT) 지정. 외부에서 내부망 특정 장치에 접근할 수 있도록 주소+포트 변환 규칙을 지정
+* 주요 기능   
+
+|구분 | 설명 |
+|:----|:----------------------------------------|
+|정의 | 외부망에서 특정 포트 번호로 들어오는 요청을 내부망 특정 장치(IP:Port)로 전달하는 NAT의 응용 기능 |
+|목적 | 내부망에 있는 서버(웹 서버, 게임 서버, CCTV 등)에 외부에서 접근 가능하게 함 |
+|동작 방식 | 외부 → 공인 IP:포트 → 공유기 → 내부 사설 IP:포트로 전달 |
+|특징 | NAT 기본 동작은 내부 → 외부 접속을 가능하게 하지만, 포트포워딩은 외부 → 내부 접속을 가능하게 함 |
+|설정 | 사용자가 직접 규칙을 지정해야 하며 자동으로 처리되지 않음 |
+|예시 | 외부에서 `공인IP:8080` 접속 → 공유기 포트포워딩 규칙 → 내부 서버 `192.168.0.20:80` 전달 |
+
+
+### NAT와 포트포워딩
+
+| 구분 | 설명 |
+|:----|:------------------------|
+|SNAT (Source) |내부 장치 => 외부로 나갈 때 출발지 IP를 공인 IP로 변환(POSTROUTING 체인)<br>|
+|DNAT (Destination) | 외부에서 들어오는 요청의 목적지 IP를 내부 IP로 변환 (PREROUTING 체인)<br>`iptables -t nat -A PREROUTING -j DNAT --to-destination ...`  |
+|포트포워딩 |외부 → 내부 (DNAT의 특정 형태). 외부 특정 포트 요청을 내부 특정 장치의 포트로 전달<br>`iptables -t nat -A PREROUTING -p tcp --dport ... -j DNAT --to-destination ...`  |
+
+* iptables 명령 정리
+
+| 구분 | iptables 명령 예시 
+|:----|:------------------------|
+| SNAT (Source) | `iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -j SNAT --to-source 192.168.45.100` <br> 내부망(10.0.0.0/24)에서 외부로 나갈 때 출발지 IP를 고정된 공인 IP(192.168.45.100)로 변환 |
+| DNAT (Destination) | `iptables -t nat -A PREROUTING -d 192.168.45.100 -p tcp --dport 80 -j DNAT --to-destination 10.0.0.100:80` <br> 외부에서 192.168.45.100:80으로 들어오는 요청을 내부 서버(10.0.0.100:80)로 전달 |
+| Port Forwarding (DNAT 활용) | `iptables -t nat -A PREROUTING -d 192.168.45.100 -p tcp --dport 8080 -j DNAT --to-destination 10.0.0.100:80` <br> 외부에서 192.168.45.100:8080으로 들어오는 요청을 내부 서버(10.0.0.100:80) 웹서비스로 포워딩 |
+
+
+### 네트워크 설정(리눅스)
+
+* 주소 표기 방법 
+   - CIDR(Classless Inter-Domain Routing) 표기: IP 뒤에 `/비트수`를 붙여 네트워크 범위 표시
+   - IP와 subnet mask를 IP/비트 . 예: `192.168.1.100/24` = IP=192.168.1.100, Subnet=255.255.255.0`와 동일  
+   - Gateway와 DNS: CIDR 표기 안하고 단일 IP 주소로 지정
+   - DHCP 사용시 IP는 자동 할당됨. 서버로 사용하려면 보통 Static IP + CIDR 을 직접 지정
+   
+* [CIDR 설명](cidr.html): IP와 subnet mask 지정하던 것을 `IP/prefix` 형식으로 변경 
+
+| 항목 | 정의 |역할 |W10/W11|Linux|Mac
+|:-----|:--------------|:-------------|:-----|:----|:----|
+|IP 주소 |호스트의 고유 주소. `192.168.1.100`|네트워크에서 해당 기계 식별|`ipconfig /all`   | `ip addr show` / `ifconfig`   | `ifconfig`        |
+|Subnet Mask |네트워크와 호스트 구분용 비트 마스크. `255.255.255.0` |네트워크 범위 지정|`ipconfig /all`| `ip addr show` / `ifconfig`  | `ifconfig`         |
+|Gateway |외부 네트워크로 나가는 출입구. `192.168.1.1` |다른 네트워크으로 패킷 전달|`ipconfig /all`| `ip route`  | `netstat -nr` / `route -n get default` |
+|DNS 서버 |도메인 이름을 IP로 변환. `8.8.8.8`, `1.1.1.1`| `www.example.com` <=> IP |`ipconfig /all`| `/etc/resolv.conf` |`scutil --dns`               |
+
+
+
+
+* OS별 네트워크 정보 확인
+
+|항목   | W10   | Linux     | macOS   |
+|:----------|:----------------|:---------------------|:------------------------|
+| IP    | `ipconfig /all`   | `ip addr show` / `ifconfig`   | `ifconfig`        |
+| subnet mask|`ipconfig /all`| `ip addr show` / `ifconfig`  | `ifconfig`         |
+| gateway  |`ipconfig /all`| `ip route`  | `netstat -nr` / `route -n get default` |
+| DNS      |`ipconfig /all`| `/etc/resolv.conf` |`scutil --dns`               |
+
+
+
+
+### Network 설정
+
+* 배포판별 네트워크 설정 비교
+
+| 항목 | Debian 계열(Debian, Ub 16.04 이하)|RHEL/CentOS/Fedora | Ubuntu(17.10 이상) |
+|:-------|:-----------------------|:-----------------------|:------------|
+| 설정 방식 | `interfaces` 파일 직접 편집| NetworkManager (CLI: `nmcli`) 또는 ifcfg 스크립트 | netplan (YAML 기반) |
+| 설정 파일 | `/etc/network/interfaces` | `/etc/sysconfig/network-scripts/ifcfg-eth0` | `/etc/netplan/*.yaml` |
+| 관리 도구 | `ifup` / `ifdown` | `nmcli`, `nmtui`, GUI | `netplan apply` |
+
+* Debian 계열 (`/etc/network/interfaces`)
+
+```bash
+auto eth0
+iface eth0 inet static
+    address 192.168.1.100
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+    dns-nameservers 8.8.8.8 1.1.1.1
+```
+
+* RHEL/CentOS/Fedora (`ifcfg-eth0`)
+
+```bash
+DEVICE=eth0
+BOOTPROTO=static
+ONBOOT=yes
+IPADDR=192.168.1.100
+NETMASK=255.255.255.0
+GATEWAY=192.168.1.1
+DNS1=8.8.8.8
+DNS2=1.1.1.1
+```
+
+
+* Ubuntu (17.10 이상, Netplan YAML)
+
+```yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: no
+      addresses: [192.168.1.100/24]
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses: [8.8.8.8, 1.1.1.1]
+```
+
+* `nmcli` CLI 방식
+
+```bash
+nmcli con add type ethernet ifname eth0 con-name static-eth0 ip4 192.168.1.100/24 gw4 192.168.1.1
+nmcli con mod static-eth0 ipv4.dns "8.8.8.8 1.1.1.1"
+nmcli con up static-eth0
+```
+
+
+
+# Tools
+## editors
+* [editors](20261-editors.html)
+
+### vi/vim
+* 유닉스 표준 화면 기반 텍스트 편집기. 1976년 Bill Joy가 개발. `vim`은 확장판  
+
+* 특징
+   - 모드 기반 편집기:  
+   - 명령 모드 (Command Mode). 커서 이동, 삭제, 복사, 붙여넣기 등 편집 명령 수행  
+   - 입력 모드 (Insert Mode). 실제 텍스트 입력 (`i`, `a`, `o` 등으로 전환)  
+
+* vi/vim 미니 치트시트
+
+| 범주 | 단축키 | 설명 |
+|:-----|:-------|:-----|
+| 모드 전환 | `i` | 입력 모드 시작 |
+| | `Esc` | 명령 모드로 전환 |
+| 저장/종료 | `:w` | 저장 |
+| | `:q` | 종료 |
+| | `:wq` | 저장 후 종료 |
+| | `:q!` | 강제 종료(저장 안 함) |
+| 이동 | `h` / `l` | 좌 / 우 이동 |
+| | `j` / `k` | 아래 / 위 이동 |
+| | `0` / `$` | 줄 처음 / 끝 이동 |
+| | `gg` / `G` | 문서 처음 / 끝 이동 |
+| 삭제 | `x` | 커서 문자 삭제 |
+| | `dd` | 현재 줄 삭제 |
+| | `Ndd` | N줄 삭제 |
+| 복사/붙여넣기 | `yy` | 현재 줄 복사 |
+| | `Nyy` | N줄 복사 |
+| | `p` / `P` | 아래 / 위 붙여넣기 |
+| 검색/치환 | `/pattern` | 패턴 검색 |
+| | `n` / `N` | 다음 / 이전 검색 결과 |
+| | `:%s/old/new/g` | 전체 치환 |
+| 실행/반복 | `.` | 마지막 명령 반복 |
+| | `u` | 실행 취소(Undo) |
+| | `Ctrl+r` | 다시 실행(Redo) |
+
+
+### vscode
+
+* [vscode-정리](vscode-정리.html)
+
+
+## cvs
+* [cvs](20261-cvs.html)
+
+### git/github
+
+
+# Virtualization
+
+* [Virtualization](virtualization.html)
+
+## Hypervisor Type 2
+* [Hypervisor Type 2](20261-Hypervisor2.html)
+
+### vbox
+### vm workstation/fusion
+
+## Hypervisor Type 1
+* [Hypervisor Type 1](20261-Hypervisor1.html)
+
+### WSL
+### vmware ESX
+### proxmox
+### NAS OS
+
+## Container/LXC
+* [Container](20261-Container.html)
+
+### docker on windows
+### docker on linux
+### podman
+### lxc
+
+## k8s
+* [k8s](20261-k8s.html)
+
+<==========================================================
+
+
+
+
+# Docker 
+## VM 자원 재조정안 (총 44 vCPU / 120GB RAM 기준)
+
+| VM  | 역할   |vc|ram|저장소|GPU|주요 패키지
+|:----|:---------|:-|:--|:-----|:--|:------------------
+|101:vm1g(LLM)|LLM 추론+NLP 전처리|16|64+8|150GB(NVMe)|3060|ollama, pt, Deepseek, LLaMA3 8B, Gemma2 9B,<br>transformers, spaCy, NLTK|
+|102:vm2g(Analyze)|의미망/토픽/감정분석+DB|12|32+8|150GB(SSD)|1650|pt, sk, pd, BERTopic, PostgreSQL, R(rpy2)|
+|100:vm3(Report)100|보고서+시각화 서버|4|12+4|100GB(SSD)|없음|Streamlit, Plotly, Flask, D3.js, Grafana, Dash|
+|103:vm4(RAG)|검색기반 응답시스템|8|12+4|50GB(SSD)|없음|LangChain, FastAPI<br>FAISS(유사도 검색), sentence-transformers, FastAPI, Haystack|
+
+* 총합: 40/48vcpu, 144/160GB RAM => prx(4 vcpu, 16GB RAM) 여유 포함
+
+## vscode
+* [vscode 완전 삭제](https://ecogis.tistory.com/entry/vs-code-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8-%EC%99%84%EC%A0%84-%EC%82%AD%EC%A0%9C-%EB%B0%A9%EB%B2%95)
+* vscode 설치
+
+## git
+* 설치시 
+   * 사용할 Editor: Use visual studio as Git's default editor
+   * 사용할 인터페이스: Use Git from the Windows Command Prompt 
+   * (recommended) Git from the command line and also from 3rd-party software
+   * Use OpenSSL library
+   * Checkout Windows-style, commit Unix-style line ending
+   * Use MinTTY or Window cmd[v]
+* [git 설치](https://sfida.tistory.com/46)
+* [github 설치, vscode 연동](https://velog.io/@blair-lee/VSCode%EC%97%90%EC%84%9C-Github-%EC%97%85%EB%A1%9C%EB%93%9C%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95%EC%A7%B1%EC%89%AC%EC%9B%80%E3%85%8B%E3%85%8B)
+* [git 요약](https://khalidpark2029.tistory.com/124)
+
+* GUI for git
+    * Git Gui: git 기본 GUI
+    * GitKraken Desktop: 유료/무료  
+    * SourceTree: 무료지만 계정유지해야 함
+    * Git and Github Extension Pack: vscode extension. GitLens(GitKraken 제공)가 포함되어 있음 
+
+
+## WSL
+
+* IMG: ubuntu 22.04. 소프트웨어를 기준으로 이름 작성. apache2:11, psql:13, r442 
+* CNT: 소프트웨어의 역할을 기준으로 이름 작성. wsrv, dbsrv, rtm, rrvest, pytm, pycrawl
+
+## Docker for Windows(D4W) 
+* D4L은 사이트에서 명령어로 설치해야 함 
+* D4W 설치
+    * WSL(Version)2를 먼저 설치할 것. D4W를 설치/실행하면 WSL상에서 사용가능     * D4W 앱 문제점: CLI기능의 100%를 사용할 수 없음 
+    * 앱사용 비추천. 명령프롬프트(CLI) 사용 권장 
+    * D4W 설치하면 명령프롬프트, WSL에서 모두 docker 가능. 별도 설치 불필요
+    * `wsl -l -v` 로 배포판과 `docker-desktop` 확인 가능
+
+* [Docker for Windows 다운/설치. 공식사이트 참고할 것](https://www.lainyzine.com/ko/article/a-complete-guide-to-how-to-install-docker-desktop-on-windows-10/)
+
+
+* 앱실행: 우측위 [Sign In] donggwys
+    * [Images] > [Hub]에 donggwys/rtm4kr 3.49GB 있음
+    
+* Docker Hub(이미지 Repo): 이미지 검색 
+    * Docker hub로 로그인
+    * ubuntu 검색
+
+### vscode 연동
+
+* [도커와 VSCode 연결해서 사용하기! (Get Started with Dev Containers in VS Code!](https://www.youtube.com/watch?v=dyR6Wt3Nt-I)
+   * Remote development, Docker plugin 권장
+   * 사이드바에 Docker 아이콘 나옴
+   * 컨테이너 내부에서 작업가능(docker exec ...)
+   * ssh로 접근해서 원격작업가능
+
+
+## 예9 (실패): ubuntu:22.04 + GUI
+
+* [도커에서 우분트 GUI 환경 구축하기](https://velog.io/@silvergun8291/%EB%8F%84%EC%BB%A4%EC%97%90%EC%84%9C-%EC%9A%B0%EB%B6%84%ED%8A%B8-GUI-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
+
+* Dockerfile 작성: 작업폴더(D:/GHUB/002/ubgui)에 Dockerfile 작성
+    * [출처](https://www.youtube.com/watch?v=0rl5145aEMk&ab_channel=AgileDevArt)
+   
+
+```
+FROM ubuntu:latest
+
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y lubuntu-desktop
+
+RUN rm /run/reboot-required*
+
+RUN useradd -m testuser -p $(openssl passwd 1234)
+RUN usermod -aG sudo testuser
+
+RUN apt install -y xrdp
+RUN adduser xrdp ssl-cert
+
+RUN sed -i '3 a echo "\
+export GNOME_SHELL_SESSION_MODE=Lubuntu\\n\
+export XDG_SESSION_TYPE=x11\\n\
+export XDG_CURRENT_DESKTOP=LXQt\\n\
+export XDG_CONFIG_DIRS=/etc/xdg/xdg-Lubuntu:/etc/xdg\\n\
+" > ~/.xsessionrc' /etc/xrdp/startwm.sh
+
+EXPOSE 3389
+
+CMD service xrdp start ; bash
+```
+
+
+* `docker build -t ubgui:22.04 .` : 이미지 생성 
+    * 없으면 다운받아 자동으로 설치함. 오래 걸림(30분 이상) 
+    * 개선사항: http://archive.ubuntu.com/ubuntu라서 오래 걸림=> 한국사이트로 변경해볼것
+    
+    
+* `docker run -d -p 3389:3389/tcp --name cubgui ubgui:22.04`
+    
+* 원격접속(RDP)
+    * 원격 데스크톱을 열고 127.0.0.0:3389 (또는 127.0.0.1:3389 등 시도해 볼 것)로 연결
+        * 오류: 이미 RD가 실행 중, 또는 RD가 실행되지만 서버가 다운이라는 메시지 나옴 
+    * username:testuser, password:1234
+    * GUI가 안나오면 service --status-all; service xrdp restart; service dbus restart
+    
+
+
+
+```
+# 다른 시스템이 실행중이라면
+docker ps   # 실행중인 C확인
+docker stop C
+docker rm C
+
+
+
+# 모든 C 삭제 
+docker container ls    # 실행중인 C
+docker container ls -a # 이때까지 실행한 C
+docker rm ccccc        # cccc를 제거 
+docker container prune # 중지된 C들 모두 제거. -f (강제 종료)
+```
+
+* 실패: 원격 데스크톱 이미 실행 중 
+
+
+* 여기 정리 
+
+```
+* D4W에 로그인
+* Docker hub에 접속해서 ubuntu 검색
+* [INSTALLING APACHE ON A DOCKER UBUNTU CONTAINER](https://medium.com/@abiolamajekodunmi2011/installing-apache-on-a-docker-ubuntu-container-4ba6a8595c9)
+
+docker pull ubuntu:22.04 # 이미지 다운로드
+
+docker container run -dit --name ub22 -p 80:80 ubuntu:22.04
+docker container ls  
+
+docker container exec -it ub22 bash
+# (한번에 시작???) docker run -it --name ub22 ubuntu:22.04 /bin/bash
+
+# root로 로그인됨 
+apt update && apt upgrade
+service --status-all  # 서비스 확인
+apt install vim
+apt install nano
+apt install neofetch
+apt install net-tools
+apt install iproute2  # ip a
+apt install systemd   # systemctl
+apt install cockpit   # 
+
+
+apt install apache2
+service --status-all 
+service apache2 start
+cd /var/www/html
+vi index.html
+service apache2 restart
+service apache2 status
+```
+
+
+
+## 예1: httpd 사용
+* 목적: 기존 이미지 사용법 요약
+* httpd 공식 이미지 다운받아 컨테이너 실행
+    * apache2 설치된 ubuntu(220MB) => alpine(보안강화 경량 리눅스배포판, 5MB)기반 권장  
+    * [공식 이미지 설명](https://hub.docker.com/_/httpd)
+    
+    
+* [도커에서 아파치 컨테이너로 웹 서버 실행](https://ione.tistory.com/entry/%EB%8F%84%EC%BB%A4%EC%97%90%EC%84%9C-%EC%95%84%ED%8C%8C%EC%B9%98-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EB%A1%9C-%EC%9B%B9-%EC%84%9C%EB%B2%84-%EC%8B%A4%ED%96%89)
+
+
+
+```
+# 공식 httpd 이미지 다운로드 
+docker pull httpd  # httpd:latest. 
+
+# 이미지 실행해서 컨테이너 생성 
+# -d:detached(bg실행), -p 호스트포트:컨테이너포트 (포트포워딩)
+docker run -d --name chttpd -p 8080:80 httpd 
+
+# 컨테이너 실행확인: 브라우저에서 http://localhost:8080로 확인 또는
+curl localhost:8080   
+
+# index.html 수정.  
+docker ps
+docker stop chttpd  # c 중지. 동일한 컨테이너 이름을 사용하려면 stop, rm해야 함 
+docker container rm chttpd
+
+docker run -dit --name chttpd -p 8080:80 -v ./htdocs:/usr/local/apache2/htdocs/ httpd 
+
+# index.html을 호스트에서 편집
+# volume 지정방법: (W10) 'D:/폴더/폴더..'  
+# $(pwd)  현재 폴더 https://fronquarry.tistory.com/31#google_vignette
+docker run -dit --name chttpd -p 8080:80 -v D:/GHUB/002/httpd/htdocs:/usr/local/apache2/htdocs httpd 
+curl localhost:8080 
+```
+
+
+* `D:/GHUB/002/httpd/htdocs/index.html`
+
+```
+<head><meta charset="UTF-8"></head> 
+Running httpd on docker
+
+<pre>
+# 이미지 가져오기
+docker pull httpd   # httpd:latest를 가져옴
+
+# 이미지 다운로드 되었는지 확인
+docker images 
+
+# 혹시 chttpd라는 컨테이너가 이미 있으면 컨테이너 중지+삭제 해야 chttpd라는 이름을 사용할 수 있음
+docker container ls
+docker container stop chttpd    
+docker container rm chttpd    
+
+# 컨테이너 실행
+# httpd이미지로 컨테이너 chttpd를 다음과 같이 생성
+# -dit: 백그라운드, 대화식, tty키 조정
+# 호스트의 8080요청은 컨테이너의 80포트로 포워딩
+# 호스트의 D:/GHUB/002/httpd/htdocs 폴더와 컨테이너의 /usr/local/apache2/htdocs를  동기화
+# index.html의 수정: 호스트 또는 컨테이너 폴더에 있는 index.html을 수정하면 즉시 반영됨
+
+docker run -dit --name chttpd -p 8080:80 -v D:/GHUB/002/httpd/htdocs:/usr/local/apache2/htdocs httpd 
+curl localhost:8080   
+
+* html 게시시 한글 깨짐
+    * chcp가 65001이고 index.html가 EUC-KR로 인코딩 된 경우 curl로 한글 깨짐, 브라우저로 한글 안 깨짐
+    * chcp가 65001이고 index.html가 UTF-8로 인코딩 된 경우 curl로 한글 안 깨짐, 브라우저로 한글 깨짐 
+* html 한글 깨짐 해결방법: 
+    * 모든 파일은 utf-8 인코딩으로 저장할 것
+    * cmd에서 인코딩을 utf-8으로 변경: `chcp 65001`
+    * index.html의 헤드에서 메타태그로 인코딩 지정: `<head><meta charset="UTF-8"></head>` 
+    * (기타) httpd나 nginx의 설정에서 utf-8지정하거나  ubuntu에 한글로케일 설치 및 지정 
+    * [컨테이너 한글 입력 로케일(locale) 설정](https://anywaydevlog.tistory.com/81): 이미지 생성까지 설명
+    * [docker 환경에서 한글 안 깨지도록 설정하기](https://earth-95.tistory.com/160)
+	
+# 컨테이너 진입 (대화식 tty키 조정, bash 실행)
+docker exec -it chttpd bash
+
+root@CID pwd
+root@CID cd /usr/local/apache2/htdocs
+root@CID more index.html
+```
+
+* html 게시시 한글 깨짐
+    * chcp가 65001이고 index.html가 EUC-KR로 인코딩 된 경우 curl로 한글 깨짐, 브라우저로 한글 안 깨짐
+    * chcp가 65001이고 index.html가 UTF-8로 인코딩 된 경우 curl로 한글 안 깨짐, 브라우저로 한글 깨짐 
+* html 한글 깨짐 해결방법: 
+    * 모든 파일은 utf-8 인코딩으로 저장할 것
+    * cmd에서 인코딩을 utf-8으로 변경: `chcp 65001`
+    * index.html의 헤드에서 메타태그로 인코딩 지정: `<head><meta charset="UTF-8"></head>` 
+    * (기타) httpd나 nginx의 설정에서 utf-8지정하거나  ubuntu에 한글로케일 설치 및 지정 
+    * [컨테이너 한글 입력 로케일(locale) 설정](https://anywaydevlog.tistory.com/81): 이미지 생성까지 설명
+    * [docker 환경에서 한글 안 깨지도록 설정하기](https://earth-95.tistory.com/160)
+
+
+```
+# container 진입 
+docker exec -it chttpd bash  # 키보드 입력이 잘 안되면 /bin/bash 
+
+root@ apt update
+root@ apt install locales
+root@ locale -a  
+apt-get install -y language-pack-ko
+
+locale-gen ko_KR.utf8 # 템플릿을 사용하여 locale 구성하기
+# 
+dpkg-reconfigure locales # 한글로 locale 변경하기
+
+# Setting Language(ko_KR.UTF-8)
+export LANGUAGE=ko_KR.UTF-8
+export LANG=ko_KR.UTF-8
+```
+
+## 예: cockpit
+
+```
+docker pull ubuntu:22.04
+
+docker run -dit --name ccockpit -p 9090:9090 ubuntu:22.04 
+docker exec -it ccockpit bash
+
+apt update
+apt install cockpit
+docker run -d --name cockpit -p 9090:9090 cockpithq/cockpit:pro-latest
+
+```
+
+
+
+
+
+## 예: GPT를 이용한 docker 운용 => 실패
+
+* so close, try next time
+
+```
+docker를 이용하여 다음과 같이 처리하려고 한다. 1) 웹 상으로 이름, 학번, 학과, 중간, 기말, 출석, 과제 점수를 받아 2) postgres에 중간+기말+출석+과제를 합한 총점과 같이 scr라는 테이블에 저장한 후 3) 웹 상으로 학번을 입력하면 이름, 학번 학과 중간 기말 출석 과제 총점이 표시되도록 하고 싶다. 그 절차를 상세히 기술할 것
+```
+
+* 작업폴더: D:/GHUB/002/prj01
+
+* 1. python용 Dockerfile 작성
+
+```
+# Python 3.8 버전의 슬림 이미지 사용
+FROM python:3.8-slim
+
+# 작업 디렉터리 생성
+WORKDIR /app
+
+# requirements.txt 파일을 복사하여 의존성 설치
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 애플리케이션 파일들을 복사
+COPY . .
+
+# Flask 애플리케이션 실행
+CMD ["python", "app.py"]
+```
+
+* requirements.txt: psycopg2-binary를 사용해야 컴파일 에러 없음 
+
+```
+flask
+psycopg2-binary 
+```
+
+
+* docker build -t flaskapp .    # -t 태그이름 
+
+
+
+
+* app.py
+
+```
+from flask import Flask, render_template, request, redirect, url_for
+import psycopg2
+
+app = Flask(__name__)
+
+# PostgreSQL 연결 설정
+def get_db_connection():
+    conn = psycopg2.connect(
+        host='db',  # Docker Compose에서 정의된 PostgreSQL 컨테이너 이름
+        database='students_db',  # 데이터베이스 이름
+        user='postgres',  # PostgreSQL 사용자
+        password='password'  # PostgreSQL 비밀번호
+    )
+    return conn
+
+# 웹 폼 제출 처리 (이름, 학번, 학과, 점수 입력)
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        name = request.form['name']
+        student_id = request.form['student_id']
+        department = request.form['department']
+        midterm = int(request.form['midterm'])
+        final = int(request.form['final'])
+        attendance = int(request.form['attendance'])
+        assignment = int(request.form['assignment'])
+        
+        # 총점 계산
+        total_score = midterm + final + attendance + assignment
+        
+        # PostgreSQL에 데이터 삽입
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('INSERT INTO scr (name, student_id, department, midterm, final, attendance, assignment, total_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                    (name, student_id, department, midterm, final, attendance, assignment, total_score))
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return redirect(url_for('index'))  # 폼 제출 후 다시 폼 페이지로 리다이렉트
+
+    return render_template('index.html')
+
+
+# 학번으로 검색하여 데이터 표시
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        student_id = request.form['student_id']
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM scr WHERE student_id = %s', (student_id,))
+        student_data = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if student_data:
+            return render_template('search_result.html', student=student_data)
+        else:
+            return '학생을 찾을 수 없습니다.'
+    
+    return render_template('search.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0
+```
+
+
+
+* docker run -p 5000:5000 flaskapp
+
+=== End of prj01
+
+## 예2: 최소 웹서버 alpine + httpd
+* 목적: 기존 이미지에서 사용자 이미지 생성하는 법 요약
+* httpd가 용량이 너무 커서 용량이 작은 alpine linux에 nginx를 설치한 이미지를 생성하여 사용 
+* []()
+
+
+
+
+
+ubuntu + postgresql
+## 예3: ROCKER 1: geospatial
+## 예4: ROCKER 2: python
+## 예5: ROCKER 3: tm 
+## 예6: 한국어 임베딩
+* [ratsgo 사이트, 이기창](https://ratsgo.github.io/embedding/)
+
+
+
+
+* [미니pc로 구축한 홈 서버를 소개합니다](https://svrforum.com/reviews/1996924)
+* VPN vs RDP
+   * VPN: tailscale
+   * RDP: Apache Guacamole, AnyDesk, RustDesk
+
+
+
+
+
+### Setting Up R in VSCode
+* [Mastering R in VSCode: A Complete Guide](https://www.datanovia.com/books/r-in-vscode/r-markdown-and-report-generation-in-vscode.html): 완벽하지 않음
+* 확장(REditorSupport.r 또는 R Extension for vscode) 설치
+* 패키지 languageserver 설치
+
+
+### 예제 이미지 사용
+
+
+* [Streamlit, Flask, Docker 를 활용한 머신러닝 데모 앱 만들기 (with XGBoost, Keras, Shap)](https://jinwoo1990.github.io/toy-projects/ccpp-demo/)
+* [Creating a Docker Image for a Simple python-flask "hello world!" application.](https://dev.to/bansikah/creating-a-docker-image-for-a-simple-python-flask-hello-world-application-jg8)
+ 
+
+
+#### ubuntu
+#### httpd
+#### mysql
+#### postgres
+#### rocker
+#### flask
+
+
+
+```
+docker pull ubuntu          # 컨테이너 가져오기 
+docker run -it --rm ubuntu  # 대화식. 종료시 자동제거
+
+root@>  more /etc/os-release  # 22.04.2 LTS
+```
+
+
+
+```
+docker pull continuumio/anaconda3   # 1.5GB
+docker pull continuumio/miniconda3  # 75M
+
+```
+
+* DH내 img 사용법
+   * (pull: img 다운로드): `docker pull donggwys/rtm4kr:4.1.3`
+   * (run: img 실행=process 생성): `docker run  -p 8787:8787 donggwys/rtm4kr:4.1.3`
+   * local:8787로 접속하면 Rstudio server가 나타남
+
+
+
+* 참고
+    * nvidia-docker는 윈도우를 지원하지 않으므로  AWS 권장(; 로컬에 설치안됨)
+* Docker 실행방법
+    * 1. 로컬에 nvidia-docker 설치 + Dockerfile로 이미지를 만들어 컨테이너 띄우기 (X)
+    * 2. 로컬에 nvidia-docker 설치 + 기존 도커이미지를 다운로드해서 컨테이너 띄우기 (X)
+    * 3. 로컬에 docker 설치 + Dockerfile로 이미지를 만들어 컨테이너 띄우기 (O)
+    * 4. 로컬에 docker 설치 + 기존 도커이미지를 다운로드해서 컨테이너 띄우기 (O)
+
+* 설치 4
+    * -it: fg실행시 stdin열기, fg실행시 tty사용 => 대화식 쉘 사용
+    * --rm: 컨테이너 종료시 자동제거
+    * 도커내 설치폴더: /notebooks/embedding에 root로 로그인됨
+    * 주의: /notebook/embedding이 있고 비어있음. 여기를 공유폴더로 지정해볼것 
+    
+
+```
+docker pull ratsgo/embedding-cpu               # 컨테이너 가져오기 
+docker run -it --rm ratsgo/embedding-cpu bash  # 대화식. 종료시 자동제거
+
+docker run -it --rm -v D:/shared/KOEMBED:/notebooks/embedding ratsgo/embedding-cpu bash  # 대화식. 종료시 자동제거
+
+```
+
+* 중요: 자료 다운받으려면 [데이터 내려받기] 참고. (저장위치: /notebooks/embedding/data/processed)
+
+```
+notebooks/embedding# git pull origin master
+notebooks/embedding# bash preprocess.sh dump-processed
+```
+
+* 컨테이너에서 로컬로 복사 (C:/User/fox/embedding에 다운로드됨)
+
+```
+C:\Users\fox> docker cp 5002bfafbe68:/notebooks/embedding .  
+```
+
+
+
+## 데이터 전처리
+* 실행시 : /notebooks/embedding/data 에 저장됨
+* 네이버 영화 말뭉치 OK
+* 한국어 위키피디아 Error
+* KorQuAD
+* 유사문장
+* ratsgo blog
+
+## 형태소 분석
+
+
+
+
+개발환경 docker 
+
+
+
+
+
+
+
+## Docker sagemath 사용법
+
+```
+docker run -p8888:8888 sagemath/sagemath:latest sage-jupyter
+
+```
+
+### Hyperplane
+
+```
+H.<x,y,z> = HyperplaneArrangements(QQ)
+h = 3*x + 2*y - 5*z - 7
+h 
+
+h.plot()
+
+
+# 세명의 개인정보
+x1 = vector([80,180])
+x2 = vector([60,170])
+x3 = vector([50,160])
+plot(x1) + plot(x2) + plot(x3)
+
+
+# 변수 2개 
+v1 = vector([180,170,160])
+v2 = vector([80,55,45])
+plot(v1, color='blue') + plot(v2, color='red')
+
+
+
+# Hamel2011: SVM
+
+x1,x2,y
+1,2,-1
+1,4,-1
+3,4,-1
+3,1,1
+4,2,1
+```
+
+
+* ![CTR](docker-containers.png)
+
+
+* ![IMG](docker-images.png)
+
+
+* ![VOL](docker-volumes.png)
+
+
+* ![Settings](docker-settings.png)
+
+* ![Troubleshoot](docker-troubleshoot.png)
+
+
+## Ubuntu GUI
+
+* 목표: GUI가 되는 최신 우분투 사용
+    * dorowu/ubuntu-desktop-lxde-vnc 설치 (브라우저 또는 VNC로 접근함)
+    * R설치
+    * R이 추가된 이미지(failsafe/ubuntu-gui) 생성
+    * 이미지, 컨테이너 모두 삭제/정리
+  
+* VNC서버를 사용하려면 Tiger > Ultra > Real VNC 를 설치해야 함 
+    
+
+### 이미지실행/추가
+
+* [dorowu/ubuntu-desktop-lxde-vnc](https://hub.docker.com/r/dorowu/ubuntu-desktop-lxde-vnc): web VNC interface to access Ubuntu LXDE/LxQT desktop
+    * 용량: 1.32GB, ubuntu 20.04.2
+    * 명령실행시 D4W의 화면을 확인해볼 것
+* pull
+
+```
+# pull후 D4W의 Images에서 확인 1.32GB 
+docker pull dorowu/ubuntu-desktop-lxde-vnc
+```
+
+* run 방식1: 브라우저로 접근
+   * `docker run -p 6080:80 -v /dev/shm:/dev/shm --name Cgui dorowu/ubuntu-desktop-lxde-vnc`
+   * 127.0.0.1:6080 접속: 왼쪽 아래 시작버튼에서 터미널 실행
+   * 연결후 R설치 
+
+
+```
+lsb_release -a  
+cat /etc/issue  # 20.04.2 LTS 
+
+apt-get update
+apt-get install r-base r-base-dev
+R
+R> hist(rnorm(100))
+R> q()
+```
+   
+* run 방식2: VNC 서버로 접근
+   * `docker run -p 6080:80 -p 5900:5900 -v /dev/shm:/dev/shm --name Cvnc dorowu/ubuntu-desktop-lxde-vnc`
+   * VNC Viewer 실행하고 127.0.0.1:5900 연결하면 새 윈도우에 우분투가 실행됨
+   * 그 다음은 동일
+
+### 이미지 저장 
+
+* commit
+   * Cgui를 이미지 failsafe/ubuntu-gui로 내보내기
+
+```
+docker ps  # NAMES 확인(CTR이름 Cgui)
+docker commit Cgui  failsafe/ubuntu-gui # 1.32 => 1.87GB
+```
+
+* 컨테이너 제거
+
+```
+docker ps
+docker kill Cgui
+docker rm Cgui 
+```
+
+* 이미지 생성확인: failsafe/ubuntu-gui가 있는지 확인
+
+```
+docker images -a
+```
+
+* 작동확인
+    * `docker run  -p 6080:80 -v /dev/shm:/dev/shm --name Cgui failsafe/ubuntu-gui`
+    * 브라우저: 127.0.0.1:6080 접속 
+    * 터미널에서 R 실행되는지 확인 (성공)
+
+
+```
+docker run  -p 6080:80 -v /dev/shm:/dev/shm --name Cgui failsafe/ubuntu-gui 
+```
+
+### 정리 
+* 불필요한 docker객체 정리
+
+
+```
+docker images -a 
+docker rmi dorowu/ubuntu-desktop-lxde-vnc # Untaged 메시지 나옴 
+```
+
+* [사용하지 않는 컨테이너/이미지/네트워크/볼륨 일괄 삭제. filter를 이용하여 선택가능]( https://www.lainyzine.com/ko/article/docker-prune-usage-remove-unused-docker-objects/)
+
+```
+docker container prune
+docker image prune 
+docker network prune
+docker volume prune
+
+# docker객체 전체 삭제
+docker system prune [-a]
+```
+
+
+## ROCKER
+### rocker/geospatial:4.1.3
+* 한글TM용 이미지 생성
+
+```
+# R 4.1.3 + java 설치  
+docker pull rocker/geospatial:4.1.3
+
+
+docker run -–rm -e PASSWORD=passwd -e ROOT=true -p 8787:8787 -–name Ctm4kr rocker/geospatial:4.1.3
+
+# 브라우저 로그인
+# 터미널 작업
+sudo passwd root
+java -version  # openjdk 11.0.14.1 
+```
+
+
+### KoNLP
+
+* devtools로 github에서 설치
+* 설치시 오류: 
+     * scala-library-2.11.8.jar: scala-library-2.11.8.jar 검색해서 복사해볼 것 
+     
+```
+devtools::install_github('haven-jeon/KoNLP', upgrade='never', INSTALL_opts=c('--no-multiarch'), force=TRUE)
+
+library(KoNLP)
+useSejongDic() # 최초실행시 옵션선택해서 사전 다운로드함
+useNIADic()    # 설치됨 
+
+sentence <- '아버지가 방에 들어가신다'
+extractNoun(sentence)
+MorphAnalyzer(sentence)
+SimplePos09(sentence)
+SimplePos22(sentence)   # 성공 
+```
+
+
+
+
+### ROCKER Project
+
+* Docker containers for the R Environment : Carl Boettiger and Dirk Eddelbuettel, Noam Ross
+* 업로드된 이미지: Ubuntu 또는 Debian 버전. ml-verse는 latex관련임 
+    * `rocker/rstudio`: 5M+, 1.72GB
+    * `rocker/r-base`
+    * `rocker/geospatial`: 9days. Rstudio, tidyverse, latex, java, 5.54GB
+    * `rocker/ml`: 9days. R, python(reticulate), cuda, latex 
+    * `rocker/r-ver`: `r-base`와 유사 debian-stable기반. 모든 CRAN 패키지 포함. r-base보다 작음
+    * `rocker/tidyverse`
+    * `rocker/r-ver`
+    * `rocker/rstudio-stable`: 3 yrs, 100K+
+    * `rocker/binder`: Rstudio + Jupyter Hub (4.85GB) R 4.2. /usr/local/bin/python. Too big
+    * `rocker/tensorflow`: ML in R with tf/keras (2 yrs)
+    * `rocker/geospatial` + tf/keras + NLP4kec 하면 10GB 정도됨 
+    * `bitnami/pytorch`: 3.63GB 정도됨
+    
+    
+    
+* 목표: 다음을 추가 
+    * `rocker/geospatial` => `failsafe/rgeopy`
+    * R+python: `reticulate,tensorflow,keras` Miniconda 사용 
+    * R: `NLP4kec,tm,wordcloud,tidytexts,tidymodels,caret` 추가
+    * 사용자변경: rstudio => fox. fox로 바꾸면 Miniconda 설치시 Too many symbolic link 발생. 포기.  rstudio로 필요한 프로그램 모두 설치하고 사용만  fox로 하거나 그냥 rstudio로 계속 사용권장  
+    * volume사용: /home/rstudio <=> D:/home/rstudio 연결하고 자료는 volume에 저장
+
+
+```
+# 중요: volume을 지정하면 파이썬설치시 링크가 너무 깊어서 윈도우상에서 오류발생함 
+# 해결: volume없이 파이썬 설치하여 컨테이너에 설치한 후 이후에 볼륨사용할 것 
+
+# 1단계: 
+docker run --rm -e PASSWORD=passwd -e USERID=fox -e ROOT=true -p 8787:8787 --name Crgeopy rocker/geospatial
+
+sudo passwd
+sudo adduser fox
+
+# root로 로그인해서 호스트명 변경
+su - 
+vi /etc/hostname # hostnamectl set-hostname rgeopy (Not working)
+rgeopy.org
+
+logout
+
+# 2단계
+```
+
+* miniconda 설치: [2022.4.22 Miniconda 오류](https://github.com/rstudio/reticulate/issues/982) (WSL파일시스템과 충돌?)
+
+```
+install.packages('reticulate') 
+library(reticulate)
+py_config()  # /home/fox/.local/share/r-miniconda/envs/r-reticulate에 Miniconda를 설치함 
+# 또는 reticulate::install_miniconda(force=TRUE)
+```
+
+# 3단계
+
+* [tf/keras 설치](https://tensorflow.rstudio.com/installation/)
+
+```
+install.packages('tensorflow')
+library(tensorflow) # q() =>  다시 로그인하면 됨
+Error: package or namespace load failed for ‘tensorflow’:
+ .onLoad failed in loadNamespace() for 'tensorflow', details:
+  call: py_module_import(module, convert = convert)
+  error: ModuleNotFoundError: No module named 'tensorflow'
+
+# 끄고 재접속 (Restart)  
+library(reticulate)
+library(tensorflow)
+install_tensorflow()
+
+install.packages('keras')
+library(keras)
+install_keras()
+```
+
+## 쉘에서 확인할 내용
+
+```
+# !lsb_release -a
+# !hostnamectl              # 18.04.5 LTS
+!cat /etc/os-release
+
+! pwd
+
+! whoami
+
+! java --version
+
+! which python  # path 설정해야함 /etc/profile
+```
+
+
+* /etc/profile 수정 
+
+```
+sudo vi /etc/profile
+
+export PATH=$PATH:/home/fox/.local/share/r-miniconda/envs/r-reticulate/bin
+
+source /etc/profile
+```
+
+
+
+* 확인: 002-check-version.py.  /home/fox/.local/share/r-miniconda/envs/r-reticulate 
+
+```
+import sys 
+print(f'Python version: {sys.version}') 
+
+import numpy as np # scientific computing
+print(f'numpy version: {np.__version__}') 
+
+import scipy as sp 
+print(f'scipy version: {sp.__version__}') 
+
+import matplotlib 
+print(f'matplotlib version: {matplotlib.__version__}')
+
+import pandas as pd 
+print(f'pandas version: {pd.__version__}')  
+
+import sklearn 
+print(f'scikit-learn version: {sklearn.__version__}') 
+
+
+import statsmodels 
+print(f'statsmodels version: {statsmodels.__version__}') 
+
+import seaborn 
+print(f'seaborn version: {seaborn.__version__}') 
+
+
+import tensorflow as tf
+print(f'tf version: {tf.__version__}')  
+
+import keras
+print(f'keras version: {keras.__version__}')
+
+if tf.test.gpu_device_name():
+    print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
+else:
+    print('Please install GPU version of TF')
+
+import torch                   # torch 1.11, cuda 11.3, cudnn 8200
+print(f'Torch version:{torch.__version__}')     
+print(f'cuda version: {torch.version.cuda}')
+print(f'cudnn version:{torch.backends.cudnn.version()}')
+```
+
+
+```
+py_run_file('002-check-version.py') # 또는 쉘에서 python 002-check-version.py
+
+import tensorflow as tf
+print(tf.__version__) # pip show tensorflow
+
+import keras
+print(keras.__version__) # pip show tensorflow
+
+import numpy as np
+print(np.__version__)
+
+```
+
+
+
+
+```
+conda_install(package='matplotlib')
+conda_install(package='seaborn')
+conda_install(package='pandas')
+conda_install(package='statsmodels')
+conda_install(package='scikit-learn')
+```
+
+```
+py_run_file('version.py')
+
+import sklearn 
+print(sklearn.__version__) 
+
+import statsmodels
+print(statsmodels.__version__) 
+
+import pandas
+print(pandas.__version__)
+
+```
+
+
+
+## 이미지 생성 1
+
+* commit
+
+```
+docker commit Crgeopy  failsafe/rgeopy  #/var/lib/docker에 저장됨
+docker images -a  # GUI에 failsafe/rgeopy  # 5.54GB
+```
+
+* 컨테이너 중지
+
+```
+docker kill Crgeopy #docker rm Crgeopy
+```
+
+
+* failsafe/rgeopy 로 Crgeopy 생성. fox로 로그인해서 작업하면 됨  
+
+```
+docker run --rm -e PASSWORD=passwd -e USERID=fox -e ROOT=true -p 8787:8787 --name Crgeopy failsafe/rgeopy
+
+## 여기까지 하면 이미지 9.01GB
+
+caret, tidymodels, tidytexts, tm, wordcloud, wordcloud2
+```
+
+* TM 처리 
+
+
+```
+# NLP4kec_1.4.0.tgz 를 PC에 다운받고 VM으로 이동 
+
+PC> docker ps # VM 이름확인 Crgeopy
+
+PC> docker cp NLP4kec_1.4.0.tgz Crgeopy:/home/rstudio
+
+# Rstudio 터미널에서 복사확인
+
+# R에서
+install.packages('NLP4kec_1.4.0.tgz', repos = NULL)
+
+# 설치확인
+
+library(NLP4kec)
+sample_sentence = "카레닌에게 잠에서 깨어나는 순간은 순수한 행복이었다."
+r_parser_r(sample_sentence, language = "ko")
+
+
+# 기타 관련패키지 설치 : tm, wordcloud, wordcloud2, quanteda
+# tidymodels, tidytext, caret, 
+# nania, skimr
+```
+
+* 이미지 생성
+
+```
+docker commit Crgeopy  failsafe/rgeopy  
+docker images -a  # GUI에 failsafe/rgeopy  # 10.5GB
+
+
+docker save --output RGEOPY.tar failsafe/rgeopy
+
+docker kill Crgeopy
+
+```
+
+
+* 확인
+
+```
+docker run --rm -e PASSWORD=passwd -e USERID=fox -e ROOT=true -p 8787:8787 -v /d/home/fox:/home/fox --name Crgeopy failsafe/rgeopy
+```
+
+
+
+
+* push: repo 이름을  docker 사용자이름으로 변경해야 올릴 수 있음
+
+```
+docker image tag failsafe/rgeopy donggwys/rgeopy
+docker push donggwys/rgeopy
+
+# 다른 곳에서 가져오기
+docker pull donggwys/rgeopy:latest 
+
+
+
+
+
+
+# KoNLP 설치
+# (공식) https://github.com/haven-jeon/KoNLP
+
+devtools::install_github('haven-jeon/KoNLP', INSTALL_opts=c('–no-multiarch')
+library(KoNLP)
+useNIADic() # 사전 설치
+
+tmp <- "이것은 소리없는 아우성"
+extractNoun(tmp)
+
+library(KoNLP)
+
+#useSystemDic() # 시스템 사전 설정
+#useSejongDic() # 세종 사전 설정
+useNIADic() # NIADic 사전 설정   # 이놈을 사용하자
+
+library(dplyr)
+
+# JRE 경로를 설정해야 한다.
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jre1.8.0_221/")
+
+# 분석할 Text data를 준비하자
+# 해당 파일은 제공
+# 가요가사!!(봄날, 에라 모르겠다, etc)
+
+txt <- readLines("C:/R_workspace/R_Lecture/data/hiphop.txt",
+                 encoding = "UTF-8")
+head(txt)
+
+# 특수문자 제거
+library(stringr)
+
+# \\W은 특수문자를 의미하는 정규식
+txt <- str_replace_all(txt,"\\W"," ")
+head(txt)
+
+# 명사 추출 연습
+tmp <- "이것은 소리없는 아우성"
+extractNoun(tmp)
+
+nouns <- extractNoun(txt)
+head(nouns)
+
+# 결과가 list로 추출되는데 이를 vector형태로 변환
+words <- unlist(nouns)
+head(words)
+
+# 빈도를 조사해보자
+wordcount <- table(words)
+head(wordcount)
+
+# 빈도를 가지고 있는 데이터를 data frame으로 변환
+df <- as.data.frame(wordcount,
+                    stringsAsFactors = F)
+head(df)
+
+# 한글자로 된 단어는 의미가 없으므로 두 글자 이상으로 된 단어만
+# 추출한 후 빈도로 내림차순 정렬한 후 상위 20개만 추출
+
+word_df <- df %>%
+  filter(nchar(words) >= 2) %>%
+  arrange(desc(Freq)) %>%
+  head(20)
+
+word_df
+
+
+# R Mecab설치
+## 공식 https://github.com/junhewk/RcppMeCab/blob/master/README_kr.md
+
+library(devtools)
+install_github("junhewk/RcppMeCab")
+
+Mecab-ko를 리눅스에 설치(https://bitbucket.org/eunjeon/mecab-ko/src/master/README.md)
+wget https://bitbucket.org/eunjeon/mecab-ko/downloads/mecab-0.996-ko-0.9.2.tar.gz
+
+tar zxfv mecab-ko-XX.tar.gz
+cd mecab-ko-XX
+./configure 
+make
+make check
+su
+
+
+# make install
+
+
+library(devtools)
+install_github("junhewk/RcppMeCab")
+
+
+pos("안녕하세요.") # 리눅스, 맥의 경우
+pos(enc2utf8("안녕하세요.")) # 윈도의 경우 입력을 UTF-8으로 선언해주셔야 합니다. 많은 분이 iconv 함수를 이용하는데, enc2utf8이 직관적이고 빠릅니다.
+posParallel(c("안녕하세요", "반갑습니다.", "많은 이용 부탁드립니다")) # 리눅스, 맥에서 멀티스레딩
+posParallel(enc2utf8(c("안녕하세요", "반갑습니다.", "많은 이용 부탁드립니다"))) # 윈도에서 멀티스레딩
+
+중간에 오류남 (그냥 NLP4kec으로 사용 )
+```
+
+
+## 사전작업
+* D:/Users/fox[/Documents] <=> /home/fox[/Documents] 와 연결
+* NLP4kec.zip 저장
+
+
+## 이미지실행/추가
+* [rocker/geospatial](https://hub.docker.com/r/rocker/geospatial): 52.7GB에서 시작
+    * 용량: 5.54GB, ubuntu 20.04.2
+    * 명령실행시 D4W의 화면을 확인해볼 것
+* pull
+
+```
+# pull후 D4W의 Images에서 확인 1.32GB 
+docker pull rocker/geospatial 
+```
+* run 방식1: 
+   * `docker run --rm -e PASSWORD=passwd -e ROOT=true -p 8787:8787 -v /d/home/rstudio:/home/rstudio --name Crgeopy rocker/geospatial`
+   * `--user` 사용금지 
+   * 127.0.0.1:8787 접속: rstudio:passwd로 로그인 
+
+```
+docker run 
+--rm                       # CTR을 한번 사용할때 사용. 종료시 파일시스템, 볼륨을 제거
+-e PASSWORD=passwd         # rstudio의 비번
+-e USERID=fox              # 사용자 fox. fox가 없어도 /home/fox는 생성됨. 생략가능  
+-e ROOT=true               # 쉘에서 root가능하도록 지정. 비번은 sudo passwd로 지정하면 됨
+-p 8787:8787               # Rstudio Server 포트
+-v /d/home/fox:/home/fox   # 로컬 D:/Users/fox(없으면 생성)와 CTR의 /home/fox를 공유
+--name Cgeopy              # CTR 이름 지정
+rocker/geospatial          # 사용할 이미지
+
+
+# (2022.4.22) Miniconda 설치 못함(Too many smbolic link)
+# docker run --rm -e PASSWORD=passwd -e USERID=fox -e ROOT=true -p 8787:8787 -v /d/home/fox:/home/fox --name Crgeopy rocker/geospatial
+```   
+
+* Rstudio에 rstudio로 로그인후 Terminal 작업
+
+```
+$ sudo passwd # root비번 지정. 
+$ sudo adduser fox   # 볼륨때문에 /home/fox는 이미 있음
+$ sudo usermod -a -G sudo fox  # fox를 sudoer에 포함 
+$ sudo apt update
+$ sudo vi /etc/hostname   # hostname 변경. readonly. 
+$ sudo visudo 
+fox ALL=(ALL:ALL) ALL
+
+$ sudo apt-get install nano 
+
+# x11을 쉽게 설치하는 방법
+# gedit을 설치하면 필요한 파일들이 같이 설치됨. 추가 1G
+# PC에서 Vcxsrv 를 설치하고 실행
+# display를 -1에서 0으로 변경
+# [V] disable access control 
+# 우분투 콘솔에서 export DISPLAY=IP번호:0.0
+# https://stackoverflow.com/questions/61860208/wsl-2-run-graphical-linux-desktop-applications-from-windows-10-bash-shell-erro
+# gedit   
+$ sudo apt-get install gedit 
+```
+
+* rstudio 로그아웃한 뒤 fox로 다시 로그인. 이렇게 해야 D:/home/fox 에 R관련내용이 저장됨. rstudio로 한 작업은 저장안 됨. 이후 fox로 작업할 것
+
+```
+$ vi test.txt # 로컬에 test.txt가 생성되는지 확인
+```
+
+* Rstudio에서 q()로 로그아웃 
+
+
+## 이미지 생성 1
+
+* commit
+
+```
+docker commit Crgeopy  failsafe/rgeopy  #/var/lib/docker에 저장됨
+docker images -a  # GUI에 failsafe/rgeopy  # 5.54GB
+```
+
+* 컨테이너 중지
+
+```
+docker kill Crgeopy
+docker rm Crgeopy
+```
+
+
+* failsafe/rgeopy 로 Crgeopy 생성. fox로 로그인해서 작업하면 됨  
+
+```
+docker run --rm -e PASSWORD=passwd -e USERID=fox -e ROOT=true -p 8787:8787 -v /d/home/fox:/home/fox --name Crgeopy failsafe/rgeopy
+```   
+
+
+## 이미지 확인 1 
+
+* geospatial 테스트: 추가할 패키지가 없으므로 commit하지 말 것 
+   * [Installation of R 4.0 on Ubuntu 20.04 LTS and tips for spatial packages](https://rtask.thinkr.fr/installation-of-r-4-0-on-ubuntu-20-04-lts-and-tips-for-spatial-packages/) 예제 실행하기
+   * x11() 때문에 오류. test-spatial.R의 x11()을 주석처리  
+
+```
+R> capabilities() # X11이 FALSE로 지정되어 있음. X11 사용비추
+
+# Download file with Spatial analyses
+download.file("https://raw.githubusercontent.com/statnmap/blog_tips/master/2018-07-14-introduction-to-mapping-with-sf-and-co.R",
+destfile = "test-spatial.R")
+# Install missing dependencies 
+# This may take some time. Packages will be built from source if not installed with Ubuntu binaries.
+install.packages("attachment")
+deps <- attachment::att_from_rscript("test-spatial.R")
+attachment::install_if_missing(deps)
+
+
+# Run the script 
+# vi test-spatial.R 해서 x11()을 모두 주석 [X11 in ROCKER](https://github.com/rocker-org/rocker-versioned/issues/13)
+# https://fossa.tistory.com/6  Disable access control
+source("test-spatial.R")
+# Show interactive outputs
+m
+tmap_leaflet(tm)
+mapView(departements_L93)
+```
+
+## 이미지 추가 1: python, reticulate, tf, keras
+* 추가 설치하고 이미지 생성후 새이미지로 재부팅후 프로그램을 확인해야 용량이 커지는 것을 막을 수 있음. 물론 사용자파일은 /home/fox에 저장되지만 서버의 /home/fox에 저장된 것을 사용하는 것이 더 중요 
+* reticulate 설치. 절대 끄지 말 것 !!!!!!!!!!!!!!
+
+
+* miniconda 설치: [2022.4.22 Miniconda 오류](https://github.com/rstudio/reticulate/issues/982) (WSL파일시스템과 충돌?)
+
+================> 여기까지 하고 중단 !!!!!!!!!!!!!!!
+==> 이유는 volume 때문에 
+
+
+```
+install.packages('reticulate') 
+library(reticulate)
+py_config()  # /home/fox/.local/share/r-miniconda/envs/r-reticulate에 Miniconda를 설치함 
+# 또는 reticulate::install_miniconda(force=TRUE)
+```
+
+* [tf/keras 설치](https://tensorflow.rstudio.com/installation/)
+
+```
+install.packages('tensorflow')
+library(tensorflow)
+Error: package or namespace load failed for ‘tensorflow’:
+ .onLoad failed in loadNamespace() for 'tensorflow', details:
+  call: py_module_import(module, convert = convert)
+  error: ModuleNotFoundError: No module named 'tensorflow'
+
+# 끄고 재접속 (Restart)  
+library(reticulate)
+library(tensorflow)
+install_tensorflow()
+
+install.packages('keras')
+library(keras)
+install_keras()
+```
+
+* 확인: version-tfkeras.py
+
+```
+py_run_file('version-tfkeras.py')
+
+import tensorflow as tf
+print(tf.__version__) # pip show tensorflow
+
+import keras
+print(keras.__version__) # pip show tensorflow
+
+import numpy as np
+print(np.__version__)
+
+```
+
+
+
+
+* 확인: tfkeras-version.py
+
+```
+py_run_file('tfkeras-version.py')
+
+import os
+import sys
+print('Python version:', sys.version, '\n')
+
+import numpy as np
+print('numpy version:', np.__version__, '\n')
+
+import pandas as pd
+print('pandas version:', pd.__version__, '\n')
+
+import sklearn
+print('scikit-learn version:', sklearn.__version__, '\n')
+
+import matplotlib
+print('matplotlib version:', matplotlib.__version__, '\n')
+
+import seaborn as sns
+print('seaborn version:', sns.__version__, '\n')
+
+
+import matplotlib
+print('matplotlib version:', matplotlib.__version__, '\n')
+
+import seaborn
+print('seaborn version:', seaborn.__version__, '\n')
+
+import pandas as pd
+print('pandas version:', pd.__version__, '\n')
+
+import sklearn
+print('scikit-learn version:', sklearn.__version__, '\n')
+
+import tensorflow as tf
+print('tensorflow version:', tf.__version__, '\n')
+
+```
+
+
+
+
+
+
+```
+library(reticulate)
+library(tensorflow)
+library(keras)
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+
+
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+# rescale
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+
+
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+  
+summary(model)  
+  
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+model %>% evaluate(x_test, y_test)
+
+# https://keras.rstudio.com/reference/predict_proba.html
+model %>% predict(x_test) %>% k_argmax() # model %>% predict_classes(x_test)
+
+```
+
+## 여기까지 하면 이미지 9.01GB
+
+caret, tidymodels, tidytexts, tm, wordcloud, wordcloud2
+
+
+* TM 처리 
+
+
+```
+# NLP4kec_1.4.0.tgz 를 PC에 다운받고 VM으로 이동 
+
+PC> docker ps # VM 이름확인 Crgeopy
+
+PC> docker cp NLP4kec_1.4.0.tgz Crgeopy:/home/fox
+
+# Rstudio 터미널에서 복사확인
+
+# R에서
+install.packages('NLP4kec_1.4.0.tgz', repos = NULL)
+
+# 설치확인
+
+library(NLP4kec)
+sample_sentence = "카레닌에게 잠에서 깨어나는 순간은 순수한 행복이었다."
+r_parser_r(sample_sentence, language = "ko")
+
+
+# 기타 관련패키지 설치 : tm, wordcloud, wordcloud2, quanteda
+# tidymodels, tidytext, caret, 
+# nania, skimr
+```
+
+* 이미지 생성
+
+```
+docker commit Crgeopy failsafe/rgeopy
+
+# tar 파일생성후 모든 이미지 지우고 tar로부터 복원
+약
+docker save --output RGEOPY.tar failsafe/rgeopy
+docker image prune -fa
+docker images -a
+docker load --input RGEOPY.tar
+docker images -a
+
+# volume 동기화됨 
+docker run --name CTRrgeopy -d --rm -e PASSWORD=pw -p 8787:8787 -v /f/homewin/rstudio:/home/rstudio myrepo:rgeopy
+
+
+docker commit CTRrgeopy  rocker/rgeopy  #/var/lib/docker에 저장됨
+# GUI에서 보임 rgeopy
+
+
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true myrepo:rgeopy # root sudoer
+
+
+
+rocker/rstudio
+```
+
+```
+# 최종 정리
+# 설치
+docker pull rocker/ml  # GUI Images에 보임
+
+# 컨테이너 실행
+# 비번/제거 
+docker run -e PASSWORD=passwd --rm -p 8787:8787 rocker/geospatial
+
+# 백그라운드(-d) 실행
+docker run -d -p 8787:8787 -e PASSWORD=passwd rocker/rstudio
+
+# 로그인 없이 실행 
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true rocker/rstudio # 비번없이
+
+# R 콘솔 실행 
+docker run --rm -ti rocker/r-base
+
+docker run -e PASSWORD=pw --rm -p 8787:8787 rocker/rstudio
+
+# Shared Volumes
+docker run -d -e PASSWORD=pw -p 8787:8787            -v /Users/fox/Documents:/home/rstudio/Documents 
+docker run -d -e PASSWORD=pw -p 8787:8787         -v /c/Users/foo:/home/rstudio/foo rocker/rstudio
+
+# Custom user
+docker run --rm -ti -v $(pwd):/home/fox –u fox rocker/ml bash
+(or)
+docker run --rm -ti -v ~/:/home/fox -u fox r-base
+
+
+# Managing Users
+docker run --rm \
+  -p 127.0.0.1:8787:8787 \
+  -e DISABLE_AUTH=true \
+  rocker/rstudio   (No passwd)
+  
+  
+
+* run 방식1: 브라우저로 접근
+   * `docker run -p 6080:80 -v /dev/shm:/dev/shm --name Cgui dorowu/ubuntu-desktop-lxde-vnc`
+   * 127.0.0.1:6080 접속: 왼쪽 아래 시작버튼에서 터미널 실행
+   * 연결후 R설치 
+```
+
+```
+lsb_release -a  
+cat /etc/issue  # 20.04.2 LTS 
+
+apt-get update
+apt-get install r-base r-base-dev
+R
+R> hist(rnorm(100))
+R> q()
+```
+   
+* run 방식2: VNC 서버로 접근
+   * `docker run -p 6080:80 -p 5900:5900 -v /dev/shm:/dev/shm --name Cvnc dorowu/ubuntu-desktop-lxde-vnc`
+   * VNC Viewer 실행하고 127.0.0.1:5900 연결하면 새 윈도우에 우분투가 실행됨
+   * 그 다음은 동일
+
+## 이미지 저장 
+
+* commit
+   * Cgui를 이미지 failsafe/ubuntu-gui로 내보내기
+
+```
+docker ps  # NAMES 확인(CTR이름 Cgui)
+docker commit Cgui  failsafe/ubuntu-gui # 1.32 => 1.87GB
+```
+
+* 컨테이너 제거
+
+```
+docker ps
+docker kill Cgui
+docker rm Cgui 
+```
+
+* 이미지 생성확인: failsafe/ubuntu-gui가 있는지 확인
+
+```
+docker images -a
+```
+
+* 작동확인
+    * `docker run  -p 6080:80 -v /dev/shm:/dev/shm --name Cgui failsafe/ubuntu-gui`
+    * 브라우저: 127.0.0.1:6080 접속 
+    * 터미널에서 R 실행되는지 확인 (성공)
+
+
+```
+docker run  -p 6080:80 -v /dev/shm:/dev/shm --name Cgui failsafe/ubuntu-gui 
+```
+
+## 정리 
+* 불필요한 docker객체 정리
+
+
+```
+docker images -a 
+docker rmi dorowu/ubuntu-desktop-lxde-vnc # Untaged 메시지 나옴 
+```
+
+* [사용하지 않는 컨테이너/이미지/네트워크/볼륨 일괄 삭제. filter를 이용하여 선택가능]( https://www.lainyzine.com/ko/article/docker-prune-usage-remove-unused-docker-objects/)
+
+```
+docker container prune
+docker image prune 
+docker network prune
+docker volume prune
+
+# docker객체 전체 삭제
+docker system prune [-a]
+```
+
+
+
+
+
+
+# MySQL 
+
+
+# 한글임베딩
+* [한글 임베딩: 개발환경 설정](https://ratsgo.github.io/embedding/environment.html)
+
+
+
+
+
+# Docker 사용법
+
+* [[Windows 10] Docker 설치 완벽 가이드(Home 포함)](https://www.lainyzine.com/ko/article/a-complete-guide-to-how-to-install-docker-desktop-on-windows-10/)
+
+
+
+* docker: 리눅스 컨테이너(경량 가상화) 앱
+* VBox, VMWare: 하드웨어부터 가상화 
+
+
+## Ubuntu용 설치
+* 기존 docker 제거 
+```
+sudo apt-get remove docker docker-engine docker.io containerd runc
+```
+
+* Docker repository를 등록하기 위한 패키지 설치
+
+```
+sudo apt install docker
+```
+## 윈도우용 설치
+
+### 기초사항
+
+* W10 Home vs W10 Pro(Enterprise, Education 64) 차이: Hyper-V(MS용 가상기계)지원여부
+* OS버전 확인: Windows + S: PC정보
+* D4W는 Pro 이상만 지원했으나, W10-20H1 이후  WSL2(Windows Subsystem for Linux V2)가 나오면서 가능해짐
+* Windows 10 Pro 에디션: WSL2 기반 Docker Engine 사용 가능. Hyper-V 기반 Docker Engine 사용 가능
+* Windows 10 Home 에디션: WSL2 기반 Docker Engine 사용 가능
+* SS i5는 W10 Home (21H1), Hansung은 W10 Pro (1909): 성공했음
+* [WSL2를 이용한 설치](https://www.lainyzine.com/ko/article/a-complete-guide-to-how-to-install-docker-desktop-on-windows-10/)
+
+### 설치
+
+
+# volume 동기화됨 
+docker run --name CTRrgeopy -d --rm -e PASSWORD=pw -p 8787:8787 -v /f/homewin/rstudio:/home/rstudio myrepo:rgeopy
+
+
+docker commit CTRrgeopy  rocker/rgeopy  #/var/lib/docker에 저장됨
+# GUI에서 보임 rgeopy
+
+
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true myrepo:rgeopy # root sudoer
+
+
+
+rocker/rstudio
+
+
+
+
+
+
+```
+# 최종 정리
+# 설치
+docker pull rocker/ml  # GUI Images에 보임
+
+# 컨테이너 실행
+# 비번/제거 
+docker run -e PASSWORD=passwd --rm -p 8787:8787 rocker/geospatial
+
+# 백그라운드(-d) 실행
+docker run -d -p 8787:8787 -e PASSWORD=passwd rocker/rstudio
+
+# 로그인 없이 실행 
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true rocker/rstudio # 비번없이
+
+# R 콘솔 실행 
+docker run --rm -ti rocker/r-base
+
+docker run -e PASSWORD=pw --rm -p 8787:8787 rocker/rstudio
+
+# Shared Volumes
+docker run -d -e PASSWORD=pw -p 8787:8787            -v /Users/fox/Documents:/home/rstudio/Documents 
+docker run -d -e PASSWORD=pw -p 8787:8787         -v /c/Users/foo:/home/rstudio/foo rocker/rstudio
+
+# Custom user
+docker run --rm -ti -v $(pwd):/home/fox –u fox rocker/ml bash
+(or)
+docker run --rm -ti -v ~/:/home/fox -u fox r-base
+
+
+# Managing Users
+docker run --rm \
+  -p 127.0.0.1:8787:8787 \
+  -e DISABLE_AUTH=true \
+  rocker/rstudio   (No passwd)
+```
+
+
+
+
+
+
+
+* Docker for windows 4.7.1 다운 받아 설치
+* 재부팅 
+* 라이센스 동의. 알약이 차단했다는 메시지 
+* D4W 실행 
+* WSL2 incomplete 안내링크 접속
+* MS Linux커널 업데이트 패키지 다운로드: x64 머신용 최신 WSL2 Linux 커널 업데이트패키지(wsl_update_x64.msi 실행) 
+* restart 
+
+* Tutorial 실행방법: docker run -d -p 80:80 docker/getting-started
+
+* D4W 실행 후 쉘에서 확인
+
+
+```
+docker version #  D4W 실행하지 않으면 오류메시지 나옴 
+docker ps      # 현재 작동중인 VM
+```
+
+## 사용법
+
+* [이미지 제거후 공간 다시 확보](https://stackoverflow.com/questions/36799718/why-removing-docker-containers-and-images-does-not-free-up-storage-space-on-wind)
+* GUI에서 TroubleShooting ? Clean/Purge data > Hypervise-V, WSL, Windows Container 모두 삭제 
+
+```
+# 3개 명령을 내리거나
+docker container prune -f
+docker image prune -f
+docker volume prune -f
+
+# 한번에
+docker system prune
+
+```
+
+
+```
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true --name Crgeopy myrepo:rgeopy 
+
+# 사용하다가
+
+docker ps                                # Crgeopy가 실행중인지 확인
+docker commit Crgeopy failsafe/rgeopy    # failsafe/rgeopy:latest 이미지가 생성됨
+
+# CTR 중지
+docker kill Crgeopy
+
+# IMG 삭제 
+docker image rm myrepo                   # Untagged 메시지 나옴 
+
+# 사용하지 않는 CTR, networks, IMG, build cache 모두 제거. 모든 CTR, IMG 다 없어짐!!
+# 경고: all stopped containers, networks, images, build cache
+docker system prune -a   
+# 사용안한 볼륨 제거 
+docker volumes prune 
+
+# GUI의 Troubleshooting에서 Clean/Purge data 를 제거하면 공간이 반환됨 
+docker image prune -a
+docker container prune -a
+docker volume prune -a
+docker network prune
+
+또는 한꺼번에
+docker system prune --volunes 
+```
+
+
+
+
+
+### 이미지 만들기
+
+```
+#/var/lib/docker에 저장됨. 또는 /Users/fox/AppData/Roaming/  
+docker commit laughing_heisenberg  myrepo:rgeopy  
+
+# GUI에서 보임 r
+
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true myrepo:rgeopy # root sudoer
+
+
+
+
+docker commit [-a 작성자  -m 안내 메시지 -p 이미지생성동안 컨테이너 중단] 컨테이너_ 이름 [저장소이름]/이미지이름:[TAG]
+
+docker run -it --name 
+```
+
+### 이미지 가져오기 
+
+* D4W 실행
+* D4W: Images > Remote Repositories 또는 docker사이트로 로그인
+* Docker Hub 접속. 아래 모든 이미지.
+* rocker/geospatial.  
+* [The Rocker Project](https://www.rocker-project.org/)
+* 참고: r관련이미지는 rocker/r-base, rstudio, geospatial 
+
+* [VcXsrv: 윈도우용 X Server](https://sourceforge.net/projects/vcxsrv/)
+* [Run matplotlib on a Windows Docker container](https://linuxtut.com/en/e29b7a60db6d181ffe35/)
+(https://medium.com/@potatowagon/how-to-use-gui-apps-in-linux-docker-container-from-windows-host-485d3e1c64a3) 따라 하면 되는데 불편 
+
+
+
+```
+# 이미지 가져오기 => images에 보임. RUN하면 옵션을 줄 수 없어 실패  
+docker pull rocker/geospatial
+
+
+# 이미지 실행후 브라우저: localhost:8787에 rstudio::passwd로 접속
+# https://www.rocker-project.org/use/managing_users/
+docker run -e PASSWORD=passwd --rm -p 8787:8787 rocker/geospatial
+docker run -d -p 8787:8787 -e PASSWORD=passwd rocker/rstudio
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true rocker/rstudio # 비번없이
+docker run --rm -p 8787:8787 -e DISABLE_AUTH=true rocker/rstudio # root sudoer
+
+
+docker system df # 새창에서 
+
+# 웹 8787접속 
+# https://rtask.thinkr.fr/installation-of-r-4-0-on-ubuntu-20-04-lts-and-tips-for-spatial-packages/ 예제 실행하기 
+
+
+R에서 실행: 필요한 패키지 설치하지만 xdisplay때문에 오류. test-spatial.R의 x11()을 주석처리  
+
+# Download file with Spatial analyses
+download.file("https://raw.githubusercontent.com/statnmap/blog_tips/master/2018-07-14-introduction-to-mapping-with-sf-and-co.R",
+destfile = "test-spatial.R")
+# Install missing dependencies 
+# This may take some time. Packages will be built from source if not installed with Ubuntu binaries.
+install.packages("attachment")
+deps <- attachment::att_from_rscript("test-spatial.R")
+attachment::install_if_missing(deps)
+# Run the script
+source("test-spatial.R")
+# Show interactive outputs
+m
+tmap_leaflet(tm)
+mapView(departements_L93)
+
+
+```
+
+
+* TM 처리 
+
+
+```
+# NLP4kec_1.4.0.tgz 를 PC에 다운받고 VM으로 이동 
+
+PC> docker ps # VM 이름확인 elastic_johnson
+
+PC> docker cp NLP4kec_1.4.0.tgz elastic_johnson:/home/rstudio
+
+# Rstudio 터미널에서 복사확인
+
+# R에서
+install.packages('NLP4kec_1.4.0.tgz', repos = NULL)
+
+# 설치확인
+
+library(NLP4kec)
+sample_sentence = "카레닌에게 잠에서 깨어나는 순간은 순수한 행복이었다."
+r_parser_r(sample_sentence, language = "ko")
+
+
+# 기타 관련패키지 설치 : tm, wordcloud, wordcloud2, quanteda
+# tidymodels, tidytext, caret, 
+# nania, skimr
+
+
+# python 설치: reticulate, tensorflow, keras
+# * reticulate 설치. 절대 끄지 말 것 !!!!!!!!!!!!!!
+
+install.packages('reticulate') 
+
+library(reticulate)
+py_config()  # /home/rstudi/.local/share/r-miniconda/envs/r-reticulate에 Miniconda를 설치함 
+
+[tensorflow 설치](https://tensorflow.rstudio.com/installation/)
+install.packages('tensorflow')
+library(tensorflow)
+Error: package or namespace load failed for ‘tensorflow’:
+ .onLoad failed in loadNamespace() for 'tensorflow', details:
+  call: py_module_import(module, convert = convert)
+  error: ModuleNotFoundError: No module named 'tensorflow'
+
+# 끄고 재접속 (Restart)  
+install_tensorflow()
+
+
+install.packages('keras')
+
+library(keras)
+install_keras()
+
+
+
+library(reticulate)
+library(tensorflow)
+library(keras)
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+
+
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+# rescale
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+
+
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+  
+summary(model)  
+  
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+model %>% evaluate(x_test, y_test)
+
+# https://keras.rstudio.com/reference/predict_proba.html
+model %>% predict(x_test) %>% k_argmax() # model %>% predict_classes(x_test)
+
+
+# 파이썬으로 직접 처리하기
+# conda는 없고, pip은 있음 
+# 쉘
+
+
+
+# R에서 설치하는 것이 쉬움 
+conda_list()  
+# base=/share/r-miniconda/bin/python, 
+# r-reticulate  /share/r-miniconda/envs/r-reticulate/bin/python, 
+conda_install('r-reticulate', package='conda')  #설치해야 쉘에서 됨. pip install conda 안됨 
+# base env가 /share/r-miniconda/envs/r-reticulate 
+
+
+또는 
+conda env list # base가 r-reticulate임 
+conda install pandas
+conda install matplotlib
+conda install seaborn
+conda install scikit-learn
+conda install statsmodels
+
+
+확인
+
+conda install tensorflow-datasets  # 여기는 -이고 ?. 너무 많음 
+
+
+# https://www.tensorflow.org/datasets/keras_example (성공)
+import tensorflow as tf
+import tensorflow_datasets as tfds  # 여기는 _이고
+
+(ds_train, ds_test), ds_info = tfds.load(
+    'mnist',
+    split=['train', 'test'],
+    shuffle_files=True,
+    as_supervised=True,
+    with_info=True,
+)
+
+def normalize_img(image, label):
+  """Normalizes images: `uint8` -> `float32`."""
+  return tf.cast(image, tf.float32) / 255., label
+
+ds_train = ds_train.map(
+    normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
+ds_train = ds_train.cache()
+ds_train = ds_train.shuffle(ds_info.splits['train'].num_examples)
+ds_train = ds_train.batch(128)
+ds_train = ds_train.prefetch(tf.data.AUTOTUNE)
+
+
+ds_test = ds_test.map(
+    normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
+ds_test = ds_test.batch(128)
+ds_test = ds_test.cache()
+ds_test = ds_test.prefetch(tf.data.AUTOTUNE)
+
+model = tf.keras.models.Sequential([
+  tf.keras.layers.Flatten(input_shape=(28, 28)),
+  tf.keras.layers.Dense(128, activation='relu'),
+  tf.keras.layers.Dense(10)
+])
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(0.001),
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=[tf.keras.metrics.SparseCategoricalAccuracy()],
+)
+
+model.fit(
+    ds_train,
+    epochs=6,
+    validation_data=ds_test,
+)
+
+```
+
+
+
+
+```
+## 수정필요 
+
+
+# import keras 대신 from tensorflow import keras 
+# keras.xxx 대신 tensorflow.keras. 
+# np_utils는 설치해야 됨. conda안되고 pip만 됨. pip install np_utils 
+# 
+from tensorflow import keras  # 추가됨 . keras(2.31 => 2.4.1) 가 tf에 포함돼서 생긴일
+# 실패 from tensorflow.keras.utils import np_utils # from keras.utils import np_utils
+# => to_categorical때문에 쓰므로 아래를 수정 
+from tensorflow.keras.models import Sequential # <-from keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.callbacks import ModelCheckpoint,EarlyStopping
+
+import matplotlib.pyplot as plt
+import numpy
+import os
+import tensorflow as tf
+
+# seed 값 설정
+seed = 0
+numpy.random.seed(seed)
+tf.random.set_seed(3)
+
+# MNIST 데이터 불러오기
+(X_train, Y_train), (X_test, Y_test)=tf.keras.datasets.mnist.load_data() # <= mnist.load_data()
+
+X_train = X_train.reshape(X_train.shape[0], 784).astype('float32') / 255
+X_test = X_test.reshape(X_test.shape[0], 784).astype('float32') / 255
+
+
+from tensorflow.keras.utils import to_categorical
+Y_train = to_categorical(Y_train, 10) # <= Y_train=np_utils.to_categorical(Y_train, 10)
+Y_test = to_categorical(Y_test, 10)
+
+# 모델 프레임 설정
+model = Sequential()
+model.add(Dense(512, input_dim=784, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+
+# 모델 실행 환경 설정
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+# 모델 최적화 설정
+MODEL_DIR = './model/'
+if not os.path.exists(MODEL_DIR):
+    os.mkdir(MODEL_DIR)
+
+modelpath="./model/{epoch:02d}-{val_loss:.4f}.hdf5"
+checkpointer = ModelCheckpoint(filepath=modelpath, monitor='val_loss', verbose=1, save_best_only=True)
+early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+
+# 모델의 실행
+history = model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=30, batch_size=200, verbose=0, callbacks=[early_stopping_callback,checkpointer])
+
+# 테스트 정확도 출력
+print("\n Test Accuracy: %.4f" % (model.evaluate(X_test, Y_test)[1]))
+
+# 테스트 셋의 오차
+y_vloss = history.history['val_loss']
+
+# 학습셋의 오차
+y_loss = history.history['loss']
+
+# 그래프로 표현
+x_len = numpy.arange(len(y_loss))
+plt.plot(x_len, y_vloss, marker='.', c="red", label='Testset_loss')
+plt.plot(x_len, y_loss, marker='.', c="blue", label='Trainset_loss')
+
+# 그래프에 그리드를 주고 레이블을 표시
+plt.legend(loc='upper right')
+# plt.axis([0, 20, 0, 0.35])
+plt.grid()
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.show()
+
+```
+
+
+
+* 이미지 만들기
+
+```
+docker commit
+
+1) docker 이미지생성
+
+2) 새 쉘에서 docker commit -m 'Add python' commit_test addpy:01 
+
+3) docker run -it --name addpy ???
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+which python # /home/rstudio/.local/share/r-miniconda/envs/r-reticulate/bin/python
+conda activate r-reticualte
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+wsl -l -v  # 실행중인 머신
+
+wsl -d docker-desktop 
+
+```
+
+
+* [Learning git]
+
+<!--
+
+```
+Course Outline
+Course Introduction
+
+Complete
+
+Lesson 1.1: Introducing Git
+
+14s remaining
+Lesson 1.2: Using the Terminal and Installing Git
+
+33s remaining
+Lesson 1.3: Preparing Git Settings
+
+4m 14s
+Lesson 1.4: Making Our First Project Directory
+
+4m 39s
+
+Lesson 2.1: Creating (Initializing) a Repository
+
+3m 28s
+Lesson 2.2: Adding a File to Our Project
+
+3m 27s
+Lesson 2.3: Making Our First Commit
+
+4m 39s
+Lesson 2.4: Working with an Existing Project
+
+5m 31s
+
+Lesson 3.1: What is a Branch?
+
+3m 35s
+Lesson 3.2: Making a Commit on a Branch
+
+3m 57s
+Lesson 3.3: Making a Second Branch
+
+3m 24s
+Lesson 3.4: Switching Branches
+
+4m 33s
+Lesson 3.5: Exercise: Working With a Local Repository and Branches
+
+2m
+Lesson 3.6: Exercise Solution: Working with a Local Repository and Branches
+
+4m 34s
+
+Lesson 4.1: Merging a Branch
+
+4m 56s
+Lesson 4.2: Introducing vi/vim
+
+2m 32s
+Lesson 4.3: Doing a Three-way Merge
+
+5m 10s
+Lesson 4.4: Merging with Conflicts
+
+4m 55s
+Lesson 4.5: Exercise: Merging
+
+1m 38s
+Lesson 4.6: Exercise Solution: Merging
+
+4m 58s
+
+Lesson 5.1: Introducing Remote Repositories
+
+2m 3s
+Lesson 5.2: Connecting to GitHub using SSH
+
+6m 56s
+Lesson 5.3: Adding a Remote Repository
+
+3m 4s
+Lesson 5.4: Pushing to a Remote Repository
+
+3m 36s
+Lesson 5.5: Updating a Remote Repository
+
+2m 45s
+
+Lesson 6.1: Working with Others
+
+6m 10s
+Lesson 6.2: Fetching Changes
+
+3m 20s
+Lesson 6.3: Working at the Same Time as Others
+
+6m 58s
+Lesson 6.4: Rebasing Part 1
+
+6m 14s
+Lesson 6.5: Rebasing Part 2
+
+4m 38s
+Lesson 6.6: Exercise: Remote Repositories and Working with Others
+
+1m 32s
+Lesson 6.7: Exercise Solution: Remote Repositories and Working with Others
+
+4m 5s
+Lesson 6.8: Next Steps
+
+37s
+```
+-->
+
+* Docker and Kubernetes Masterclass: From Beginner to Advanced
+
+<!--
+```
+What you will learn
+Build and manage containers using Docker efficiently
+Create optimized Dockerfiles for reusable container images
+Deploy scalable applications using Kubernetes orchestration
+Configure networking and storage for containerized systems
+Implement secure practices in Kubernetes cluster management
+Monitor and troubleshoot applications in Docker and Kubernetes
+Audience
+This course is designed for software developers, DevOps engineers, and system administrators who want to master containerization and orchestration using Docker and Kubernetes. It is also ideal for IT professionals looking to enhance their skills in deploying and scaling modern applications in cloud environments. While prior experience with command-line tools and basic programming knowledge is helpful, it is not mandatory, making the course accessible to motivated learners from diverse technical backgrounds.
+
+About the Author
+LM Academy: LM Academy's Lauro Fialho Müller is a seasoned DevOps and Cloud Engineer with deep expertise in AWS, CI/CD pipelines, Kubernetes, and a broad background across multiple programming languages. Currently a Senior Infrastructure Consultant at Thoughtworks, he is passionate about Cloud Computing, Systems Design, FinOps, and AI. Known for his commitment to knowledge-sharing, Lauro actively contributes to the growth and success of fellow developers, guiding them in both personal and professional development within the tech community.
+
+
+Resources
+Supplemental Content
+Course Outline
+
+Welcome!
+
+14s remaining
+Making the Most of This Course
+
+2m 36s remaining
+Setting Expectations
+
+3m 47s
+
+
+
+
+
+
+Overview of the Section
+
+1m 11s
+Installing Docker on MacOS [MacOS Users]
+
+1m 32s
+Installing Docker on Linux [Linux Users]
+
+4m 45s
+Running Docker Without Sudo [Linux Users]
+
+2m 29s
+Setting Up Windows Subsystem for Linux (WSL) [Windows Users]
+
+3m 55s
+Key Features of Windows Subsystem for Linux [Windows Users]
+
+6m 10s
+Installing Docker on Windows [Windows Users]
+
+2m 27s
+Running Docker in WSL [Windows Users]
+
+1m 51s
+Exploring Play with Docker
+
+2m 42s
+Installing NodeJS
+
+1m 26s
+Installing Postman
+
+2m 31s
+Installing Visual Studio Code
+
+2m 10s
+
+Overview of the Section
+
+1m 23s
+Lab: Running Your First Container
+
+8m 14s
+Exploring the Container Lifecycle
+
+6m 33s
+Lab: Using the Docker CLI - Part 1
+
+11m 34s
+Lab: Using the Docker CLI - Part 2
+
+9m 47s
+Lab: Getting Help with the Docker CLI
+
+3m 32s
+
+Overview of the Project
+
+1m 39s
+Running NGINX Containers
+
+2m 38s
+Customizing Content Inside the NGINX Container
+
+5m 34s
+Wrapping Up the Project
+
+2m 17s
+
+Overview of the Section
+
+1m 19s
+What Are Docker Images?
+
+5m 59s
+Working with Container Registries
+
+7m 31s
+Lab: Exploring DockerHub
+
+3m 59s
+Lab: Logging Into DockerHub via Docker CLI
+
+5m 20s
+Lab: Managing Docker Images with the CLI
+
+8m 20s
+Introduction to Dockerfiles
+
+7m 25s
+Lab: Creating a Dockerfile for Nginx
+
+8m 2s
+Lab: Adding Local Files to Our Docker Image
+
+8m 27s
+Lab: Understanding the Difference Between Images and Containers
+
+10m 47s
+
+Project Overview
+
+44s
+Building a Hello World Express App
+
+7m 37s
+Saving and Returning Users in Memory
+
+5m 19s
+Testing the Users App
+
+3m 25s
+Dockerizing Our Express App
+
+8m 31s
+Exploring Container Interactions and Project Cleanup
+
+5m 37s
+
+Overview of the Section
+
+1m 34s
+Lab: Understanding Docker's Layered Architecture
+
+6m 52s
+Lab: Exploring Build Contexts
+
+8m 36s
+Lab: Using Dockerignore to Skip Files
+
+7m 49s
+Lab: Introduction to Environment Variables
+
+10m 42s
+Lab: Setting Environment Variables via the CLI
+
+7m 55s
+Lab: Setting Environment Variables via Files
+
+6m 59s
+Lab: CMD vs. ENTRYPOINT in Dockerfiles
+
+10m 30s
+Introduction to Distroless Images
+
+3m 42s
+Lab: Introduction to Multistage Dockerfiles
+
+8m 9s
+Lab: Multistage Dockerfiles and Distroless Images in Practice
+
+9m 4s
+Lab: Adding Typescript to the Express App
+
+11m 14s
+Lab: Updating Dockerfile to Transpile Typescript Code
+
+9m 43s
+Lab: Optimizing Docker Images - Base Images
+
+18m 23s
+Lab: Optimizing Docker Images - Instruction Order
+
+8m 19s
+Lab: Optimizing Docker Images - Managing Dependencies
+
+11m 8s
+Lab: Optimizing Our Typescript Dockerfile
+
+8m 37s
+
+Project Overview
+
+54s
+Setting Up the React App
+
+6m 8s
+Building and Serving the React App
+
+4m 8s
+Creating a Dockerfile for Our React App - Part 1
+
+7m 37s
+Creating a Dockerfile for Our React App - Part 2
+
+7m 39s
+
+Overview of the Section
+
+47s
+Lab: Understanding the Need for Volumes
+
+3m 56s
+Introduction to Docker Volumes
+
+2m 48s
+Lab: Working with Bind Mounts
+
+11m 11s
+Lab: Using Named Volumes
+
+10m 2s
+Lab: Managing Docker Volumes with the CLI
+
+7m 2s
+
+Overview of the Section
+
+1m 3s
+Lab: Setting CPU Limits for Containers
+
+10m 37s
+Lab: Setting Memory Limits for Containers
+
+11m 28s
+Lab: Working with Restart Policies
+
+10m 27s
+Introduction to Networking in Docker
+
+4m 4s
+Lab: Using the Default Bridge Network
+
+5m 56s
+Lab: Working with User-Defined Networks
+
+8m 2s
+Lab: Using the Host Network
+
+5m 5s
+
+Project Overview
+
+2m 58s
+Running a MongoDB Server
+
+7m 24s
+Adding Root Credentials to MongoDB
+
+8m 39s
+Setting Credentials for the Key-Value Database
+
+7m 24s
+Defining Ports, Networks, and Volumes
+
+11m 52s
+Enhancing the Structure of Utility Scripts
+
+15m 36s
+Setting Up the Express App
+
+10m 59s
+Dockerizing the Express App
+
+4m 13s
+Creating Scripts to Initialize the Backend Container
+
+11m 5s
+Adding Hot Reloading with Nodemon
+
+4m 39s
+Defining the API Routes
+
+7m 56s
+Creating and Retrieving Key-Value Pairs
+
+11m 8s
+Updating and Deleting Key-Value Pairs
+
+6m 46s
+Testing the App and Final Cleanup
+
+4m 28s
+
+Overview of the Section
+
+1m 6s
+Overview of Docker Compose
+
+7m 13s
+Comparing Docker-Compose and Compose CLI Commands
+
+1m 42s
+Lab: Running MongoDB with Docker Compose
+
+6m 30s
+Lab: Using Environment Variables in Docker Compose
+
+3m 48s
+Lab: Working with Bind Mounts in Docker Compose
+
+6m 43s
+Lab: Managing Volumes and Networks in Docker Compose
+
+4m 58s
+Lab: Adding a Backend Service to the Docker Compose File
+
+2m 39s
+Lab: Handling Service Dependencies in Docker Compose
+
+3m 53s
+Lab: Hot Reloading and File Watching
+
+6m 12s
+Lab: Using Docker Compose CLI
+
+10m 39s
+Lab: Getting Help with Docker Compose CLI
+
+2m 50s
+
+Project Overview
+
+4m 35s
+Setting Up NPM Projects
+
+6m 44s
+Dockerizing the Notebooks Backend
+
+4m 45s
+Configuring Docker Compose for Notebooks Services
+
+11m 42s
+Setting Up Docker Compose for Notes Services
+
+8m 11s
+Using Multistage Builds for Our Images
+
+11m 47s
+Merging Multiple Projects in Docker Compose
+
+5m 15s
+Implementing the NGINX Reverse Proxy
+
+9m 4s
+Establishing Connections between Services
+
+7m 48s
+Setting Up Models and Routes for the Notebooks Service
+
+6m 21s
+Creating and Retrieving Notebooks
+
+7m 18s
+Updating and Deleting Notebooks
+
+8m 58s
+Refactoring the Code
+
+7m 57s
+Implementing Routes and Business Logic in the Notes Backend
+
+8m 57s
+Storing Notebook IDs in the Notes Service - Part 1
+
+7m 56s
+Storing Notebook IDs in the Notes Service - Part 2
+
+9m 54s
+Storing Notebook IDs in the Notes Service - Part 3
+
+4m 35s
+
+Overview of the Section
+
+1m 14s
+Why Choose Kubernetes?
+
+5m 41s
+Introduction to Kubernetes
+
+4m 23s
+Understanding Kubernetes Architecture
+
+4m 25s
+The Control Plane in Kubernetes
+
+8m 13s
+The Data Plane in Kubernetes
+
+4m 15s
+The kubectl Command-Line Interface
+
+3m 8s
+
+Installing Kubectl on MacOS [MacOS Users]
+
+5m 1s
+Installing Minikube on MacOS [MacOS Users]
+
+5m 45s
+Installing Kubectl on Linux [Linux Users]
+
+3m 37s
+Installing Minikube on Linux [Linux Users]
+
+3m 50s
+Installing Kubectl on Windows Subsystem for Linux (WSL) [Windows Users]
+
+3m 39s
+Installing Minikube on Windows Subsystem for Linux (WSL) [Windows Users]
+
+3m 42s
+
+Overview of the Section
+
+1m 17s
+Introduction to Pods
+
+4m 9s
+Understanding the Pod Lifecycle
+
+8m 15s
+Lab: Creating Pods with Kubectl
+
+4m 7s
+Lab: Managing Pods with Kubectl
+
+8m 17s
+Lab: Exposing Pods with Services
+
+6m 29s
+Lab: Color API - Implement v1.0.0
+
+6m 49s
+Lab: From Dockerfiles to Pods
+
+8m 4s
+
+Overview of the Section
+
+1m 46s
+Managing Objects in Kubernetes
+
+10m 19s
+Working with Kubernetes Manifest Files
+
+4m 51s
+Lab: Using Imperative Commands - Part 1
+
+5m 46s
+Lab: Using Imperative Commands - Part 2
+
+8m 21s
+Lab: Generating Kubernetes Manifests with kubectl
+
+3m 41s
+Lab: Shortcomings of Imperative Commands with Configuration Files
+
+8m 46s
+Lab: Managing Objects Declaratively in Kubernetes
+
+8m 41s
+Lab: Migrating from Imperative to Declarative Object Management
+
+2m 49s
+Lab: Creating Multiple Kubernetes Manifests in a Single YAML File
+
+5m 28s
+
+Overview of the Section
+
+56s
+Understanding ReplicaSets
+
+5m 30s
+Lab: Creating and Managing ReplicaSets
+
+6m 10s
+Lab: Updating Pods with ReplicaSets - Limitations
+
+6m
+Lab: Managing Existing Pods with ReplicaSets - Limitations
+
+7m 7s
+Introduction to Deployments
+
+7m 3s
+Lab: Creating and Managing Deployments
+
+6m 53s
+Lab: Updating the Pod Template in a Deployment
+
+4m 43s
+Lab: Understanding Deployment Rollouts
+
+12m 9s
+Lab: Scaling Deployments with Kubectl
+
+3m 22s
+Lab: Troubleshooting Failed Rollouts
+
+10m 40s
+
+Overview of the Section
+
+1m 13s
+Introduction to Services in Kubernetes
+
+6m 52s
+Lab: Color API - Implement v1.1.0: Adding Hostname Information
+
+8m 36s
+Lab: Traffic Generator - Implement v1.0.0
+
+11m 36s
+Lab: Deploying the Color API and Traffic Generator
+
+8m 23s
+Lab: Working with ClusterIP Services
+
+12m 54s
+Lab: Working with NodePort Services
+
+7m 15s
+Lab: Using NodePort Services in Linux
+
+7m 4s
+Lab: Working with ExternalName Services
+
+5m 24s
+
+Overview of the Section
+
+1m 25s
+Understanding Labels and Selectors
+
+7m
+Lab: Using Labels and Selectors in Kubectl
+
+5m 55s
+Lab: Selecting Objects with MatchLabels and MatchExpressions
+
+9m 38s
+Understanding Annotations in Kubernetes
+
+4m 11s
+Introduction to Kubernetes Namespaces
+
+8m 40s
+Lab: Creating and Managing Namespaces
+
+11m 58s
+Lab: Cross-Namespace Service Communication
+
+6m 26s
+Introduction to Resource Quotas, Requests, and Limits
+
+7m 14s
+Lab: Setting Up Resource Quotas
+
+7m 12s
+Lab: Setting Resource Requests and Limits
+
+5m 47s
+Lab: Managing Rollouts, Resource Requests, and Limits
+
+11m 22s
+Startup, Liveness, and Readiness Probes
+
+5m 51s
+Lab: Color API - Implement v1.2.0: Adding Health Endpoints
+
+7m 45s
+Lab: Working with Startup Probes
+
+7m 49s
+Lab: Color API - Implement v1.2.1: Adding a Dedicated Startup Endpoint
+
+1m 45s
+Lab: Working with Liveness Probes
+
+3m 18s
+Lab: Working with Readiness Probes
+
+12m
+
+Overview of the Section
+
+1m 31s
+Introduction to Docker Volumes
+
+8m 54s
+Understanding EmptyDir and Local Volumes
+
+3m 55s
+Lab: Using EmptyDir Ephemeral Storage
+
+14m 33s
+Introduction to Persistent Volume Claims
+
+6m 54s
+Lab: Creating Persistent Volumes and Persistent Volume Claims
+
+14m 34s
+Lab: Mounting Volumes in Pods and Containers
+
+10m 31s
+Lab: Deleting Persistent Volumes and Persistent Volume Claims
+
+5m 51s
+Lab: Dynamically Provisioning Persistent Volumes
+
+10m 25s
+Introduction to StatefulSets in Kubernetes
+
+5m 12s
+Lab: Creating Persistent Volumes with StatefulSets
+
+6m 52s
+Lab: Deploying a StatefulSet
+
+13m 44s
+Lab: StatefulSets with Dynamic Volume Provisioning
+
+5m 5s
+Lab: Using Headless Services
+
+12m 11s
+
+Overview of the Section
+
+58s
+Introduction to ConfigMaps in Kubernetes
+
+5m 15s
+Lab: Color API - Implement v1.3.0: Receiving External Color Information
+
+4m 37s
+Lab: Passing Information from ConfigMaps via Environment Variables
+
+13m 46s
+Lab: Mounting ConfigMaps as Volumes
+
+15m 15s
+Introduction to Secrets in Kubernetes
+
+3m 4s
+Lab: Passing Information from Secrets via Environment Variables
+
+9m 23s
+Lab: Mounting Secrets as Volumes
+
+7m 1s
+
+Overview of the Project
+
+4m 3s
+Creating Database Credentials
+
+6m 18s
+Creating a Headless Service and ConfigMaps
+
+5m 34s
+Deploying the StatefulSet
+
+9m 42s
+Deploying and Validating the StatefulSet
+
+6m 17s
+Testing StatefulSet Scaling
+
+7m 20s
+Color API - Implement v2.0.0: Code Refactor
+
+16m 5s
+Color API - Implement v2.0.0: Persisting Data in MongoDB
+
+12m 1s
+Color API - Implement v2.0.0: Adding Database Connection Logic
+
+2m 58s
+Color API - Implement v2.0.0: Defining Routes for Business Logic
+
+11m 2s
+Deploying the New Color API Version
+
+15m 40s
+Wrapping Up and Cleaning Up the Project
+
+12m 50s
+
+Overview of the Section
+
+2m 3s
+Introduction to Kubernetes Security
+
+7m 2s
+Understanding Role-Based Access Control (RBAC)
+
+8m 56s
+Lab: Exploring Minikube's Roles and ClusterRoles
+
+12m 14s
+Understanding the Kubernetes API
+
+11m 14s
+Lab: Exploring Kubernetes API Resources
+
+7m 34s
+Lab: Creating Two Users: Alice and Bob
+
+8m 37s
+Lab: Configuring Access Credentials for Alice and Bob
+
+8m 57s
+Lab: Setting Up Permissions to Read Pods
+
+11m 4s
+Lab: Using ClusterRoles for Cluster-Wide Permissions
+
+7m 41s
+Lab: Exploring Subresources and Permissions
+
+4m 43s
+Introduction to Service Accounts in Kubernetes
+
+4m 27s
+Lab: Working with Default Service Accounts
+
+6m 16s
+Lab: Creating Custom Service Accounts
+
+9m 21s
+Lab: RBAC Clean-Up
+
+3m 32s
+Introduction to Network Policies in Kubernetes
+
+6m 43s
+Calico vs. Native Kubernetes Network Policies
+
+2m 5s
+Lab: Denying All Ingress Traffic
+
+10m 55s
+Lab: Allowing Traffic Between Specific Pods
+
+6m 16s
+Lab: Working with Pod Selectors
+
+5m 43s
+Lab: Combining Pod Selectors
+
+9m 29s
+Lab: Handling Egress Traffic
+
+11m 42s
+Lab: Working with Network Policies and Namespaces
+
+2m 33s
+Introduction to Pod Security Standards (PSS)
+
+5m 32s
+Lab: Applying Pod Security Standards
+
+12m 29s
+Lab: Exploring the Pod Security Standards Documentation
+
+2m 17s
+
+Overview of the Section
+
+1m 23s
+Introduction to Kustomize
+
+6m 55s
+Lab: Building Our First Kustomize Project
+
+8m 26s
+Understanding Bases and Overlays
+
+2m 43s
+Lab: Creating Dev and Prod Overlays
+
+7m 53s
+Introduction to Transformations
+
+4m 21s
+Lab: Working with Transformations
+
+10m 14s
+Lab: Generating ConfigMaps
+
+9m 23s
+Lab: Generating Secrets
+
+6m 28s
+Lab: Introduction to Patching in Kustomize
+
+8m 55s
+Lab: Using Strategic Merge Patches
+
+6m 32s
+Lab: Using JSON Patches
+
+10m 15s
+
+Overview of the Project
+
+4m 3s
+Creating a Google Cloud Platform (GCP) Account
+
+6m 55s
+Understanding Project Costs
+
+3m 16s
+Navigating GCP's UI Console
+
+9m 19s
+Installing the gcloud CLI
+
+3m 57s
+Exploring the GKE UI Console
+
+2m 5s
+Creating a Google Kubernetes Engine (GKE) Cluster
+
+7m 38s
+Connecting kubectl to GKE
+
+5m 48s
+Deploying an Nginx-based Website
+
+8m 32s
+Exploring Storage Classes in GKE
+
+9m 3s
+Understanding API Resources in GKE
+
+2m 42s
+Creating Database Credentials for MongoDB
+
+6m 35s
+Deploying the MongoDB StatefulSet - Part 1
+
+6m
+Deploying the MongoDB StatefulSet - Part 2
+
+10m 8s
+Deploying the MongoDB StatefulSet - Part 3
+
+13m 1s
+Deploying the Color API Application
+
+5m
+Creating a LoadBalancer Service for External Access
+
+3m 34s
+Color API - Implement v2.1.0-dev: Exposing Prometheus Metrics
+
+3m 41s
+Customizing Database Deployments
+
+14m 39s
+Deploying the Prod Overlay and Customizing the Dev Color API Image
+
+4m 44s
+Denying All Ingress and Allowing Traffic Between Color API and MongoDB
+
+9m 13s
+Allowing External Traffic into Color API Pods
+
+4m 51s
+Registering a Domain for Our Website
+
+3m 47s
+Allocating Static IPs for Ingress
+
+5m 32s
+Creating Ingress Objects
+
+6m 25s
+Creating Managed TLS Certificates
+
+4m 30s
+Testing Ingress Traffic from Web to Color API Pods
+
+3m 46s
+Cleaning Up the Project
+
+5m 38s
+
+Course Wrap-Up and Final Thoughts
+
+1m 31s
+```
+-->

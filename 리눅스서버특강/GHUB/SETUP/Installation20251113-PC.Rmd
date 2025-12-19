@@ -1,0 +1,1855 @@
+---
+title: 'Installation20251113-PC'
+output: 
+  html_document:
+    anchor_sections: TRUE # default is FALSE
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+    theme: yeti
+    highlight: kate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    #number_sections: true
+    #df_print: paged
+    #code_folding: show
+---
+
+
+```{css, echo=FALSE}
+.main-container {
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+@font-face {
+  font-family: 'Noto Sans KR' ;
+  font-style: normal;
+  font-weight: 400;
+}
+
+/* Headers 
+
+https://en.wikipedia.org/wiki/List_of_Unicode_characters: bullets dingbats
+*/
+
+h1:before{
+  # content:'\25A8';  '\25A0'; # No bullet
+  margin:0 10px  
+} 
+
+h2:before{
+  content: '\25A0'; # '\25FC'; # =&FilledSmallSquare; Black Medium Square '\25A0'(Black Square);  
+  margin:0 10px  
+}
+
+h3:before{
+  content: '\274F'; # '\25CF';  #'\25C6'(Black Diamond);  
+  margin:0 10px  
+}
+
+h4:before{
+  content: '\274D'; #'\29BF'; # = ofcir '\25CA'; #'\2023';  #'\25C6';  
+  margin:0 10px  
+}
+
+h5:before{
+  content: '\25C6'; # '\25CF'; #'\2023'; # 25E6 ;  #'\25FE' '\25C6';  
+  margin:0 10px  
+}
+
+h6:before{
+  content: '\25CF'; # '\25CF'; #'\2023'; # 25E6 ;  #'\25FE' '\25C6';  
+  margin:0 10px  
+}
+
+  
+  
+h1 {font-size: 25px; color:#000000; font-family:'Consolas','Noto Sans KR' ; font-weight:900} /*Black*/
+h2 {font-size: 23px; color:#00008B; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} /*DarkBlue*/
+h3 {font-size: 20px; color:#800000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} /*Maroon*/
+h4 {font-size: 20px; color:#800000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} /*Orange*/
+h5 {font-size: 18px; color:#000000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} 
+
+h6 {font-size: 18px; color:#000000; font-family:'Consolas', 'Noto Sans KR' ;font-weight:900} 
+
+pre,
+code {
+  font-family: 'Consolas',Menlo, Monaco, 'Courier New', monospace, '바탕체';
+}
+
+body {
+  line-height: 1.85; # line-height: 1.85;
+}
+li {line-height: 1.85;}
+
+
+# th,td{padding:50px;} # 35px 50px 35px 50px;} # Rmd에서 효과없음  
+# <script>document.write( document.lastModified );</script>  
+```
+
+## Hardware 
+
+* AI용 PC: 
+    * 기준: 안정적인 파워, 냉각 성능, 확장성
+    * CPU : 빠르고 코어가 많은 CPU. PC기준 i7, i9, 서버기준 AMD Epyc, Intel Xeon
+    * RAM : 다다익램
+    * 저장장치: NVME 4 > NVME 3 > SATA SSD > HDD
+    * GPU : vRAM 많을수록 좋음. 가급적 Ampere 이후 세대 (Blackwell) 선호
+    * 매우 비쌈. GPU를 사용하려면 서버나 워크스테이션 권장
+    * 중고 장점: 가성비. PC에 비해 서버는 가격 하락이 매우 심함 (1/100. 천만원에서 10만원). 서버용 RAM(ECC)이 PC용의 75% 수준. llm 사용시 장기적으로 개인 서버가 더 경제적이고 보안 우수
+    * 중고 단점: 내구성. 전성비. 서버는 세대가 바뀔때 성능은 2배, 전기는 1/2정도 소비함. 전기료 걱정 (월 1만원) 
+    
+    
+항목|px Z440|px Z820|dasci sm3080|stats in2640|MS Srv(X)|HP Victus|SS
+:-|:-----------|:----------|:----------|:-----------|:-------|:-------|:-----
+ip|192.168.45.44|192.168.45.23|210.121.131.73|210.121.131.59|??|??|??
+Start|2025.2.1(2014)|2024.12.3(2012)|2021.1.20(2020)|2017.4|2014.2|2023.11|202?.?.?
+CPU|E5-2695 v4|E5-2660 v2|Silver 4214R|E5-2640v4|E5-2630v2|i5-12500H|i7-10750H 
+Clock|@2.1-3.3|@2.2-3.0|@2.4-3.5|@2.4-3.4|@2.6-3.1|@2.5~4.5|@2.6~5.0
+TDP|120W|95W|100W|90W|80W|45W|45W
+Score|19043,1827|10449,1503|18335,1970|12509,1960|7477,1570|21072,3465|11834,2654  
+Dual|35126,1879|18491,1423|27742,1993|20908,1849|13637,1573|??|??
+C/T,2T|18/36, 72|10/20, 40|12/24, 48|10/20, 40|6/12, 24|16=4/8+8/8|6/12
+RAM|64=16x4 DDR4|128=8x16 DDR3|128=32x4 DDR4|96 DDR3|64 DDR3|32 DDR4|32 DDR4
+&nbsp;|16G 2400 (SS 2Rx4)|8G 12800,1600|32G|8G 1333|16G 1600|32GB|32GB
+SSD|900G SATA|250G SATA|970 Evo+ 1T|In 480G,SS 256G|NA|Gen4 512G|SS 512G
+HDD|1T|NA,500G|4T SATA|Toshiba 4T|2T|NA|NA
+OS |Prxmx 8.3, W10pro|Prxmx 8.3, W10pro|Ub 22.04|Ub 20.04,Prxmx|MS|W11+WSL|W11+WSL
+GPU|Q M2000,Maxwell|Q K4000,Maxwell|RTX3080,Ampere|NA|NA|RTX4060,Ada|RTX2060,Turing
+nCUDA|768|768|8704|||3072|1920
+GDDR|128bit 4G|V5 3G,192b|V6X 12G,384b|||V6 8G,128b|V6 6G,192b
+Ben|3990(75W)|2720(80W)|26640(350W)|||17615(115W)|11355(80W)
+
+* GPU 비교: Tesla(2006) > Fermi (2010) > Kepler (2012) > Maxwell (2014) > Pascal (2016, GTX 10) > Volta (2017) > Turing (2018, RTX 20) > Ampere (2020, RTX 30) > Ada Lovelace (2022, RTX 40) > Blackwell (2024) 
+
+
+|GPU|Gen|nCuda|ram|ram size|i/f|대역폭|크기|TDP|score|toolkit|cuDNN|tf|pt|
+|------|:---|:---|:----|:-----|:----|:------|:-----|:----|:----|:----|:---|:---|:--|:--|
+|Q K4000|Kepler,2013|768|GDDR5|3 GB|192-b|134.0 GB/s|241x111|80W|7.0|11.0|8.0|2.4|1.7|
+|Q M2000|Maxwell,2016|768|GDDR5|4 GB|128-b|106.0 GB/s|201x111|75W|10.25|11.2|8.0|2.4|1.7|
+|GTX 1650|Turing|896|GDDR5|4 GB|128-b|128.0 GB/s|229x111|75W||11.2|8.0|2.4|1.7|
+|RTX 3050|Ampere,2022|2560|GDDR6|8 GB|128-b|224.0 GB/s|242x112|130W|32.4|11.2|8.0|2.4|1.7|
+|RTX 3060|Ampere,2021|3584|GDDR6|12 GB|192-b|360.0 GB/s|242x112|170W|43.89|11.2|8.0|2.4|1.7|
+|RTX 4060|Ada   |3072|GDDR6|8 GB|128-b|288.0 GB/s|240x111|115W||11.2|8.0|2.4|1.7|
+|RTX 3080|Ampere|8704|GDDR6X|10 GB|320-b|760.0 GB/s|285x112|320W||11.2|8.0|2.4|1.7|
+
+
+
+|세대|출시|제품| 주요 특징 |
+|:---|:---|:---|:----------|
+| Tesla     | 2006~8| GTX 8800    | 최초의 CUDA 지원, 병렬 컴퓨팅 도입 |
+| Fermi     | 2010  | GTX 400/500 | ECC 메모리, 더 강력한 CUDA 성능 |
+| Kepler    | 2012  | GTX 600/700 | 전력 효율 개선, GPU Boost 도입 |
+| Maxwell   | 2014  | GTX 750/900 | 저전력 고성능, NVENC 개선 |
+| Pascal    | 2016  | GTX 10      | 16nm 공정, VR 및 딥러닝 강화 |
+| Volta     | 2017  | Tesla V100  | Tensor 코어 최초 도입 (AI 연산) |
+| Turing    | 2018  | RTX 20      | 실시간 Ray Tracing, DLSS 1.0 |
+| Ampere    | 2020  | RTX 30 A100 | 2세대 RT 코어, 3세대 Tensor 코어 |
+| Ada Lovelace| 2022| RTX 40      | DLSS 3.0, 더 빠른 RT 성능, AV1 인코딩 |
+| Blackwell | 2024  | B100 HPC/AI용| HBM3e 메모리, 2배 이상 AI 성능 향상 |
+
+* Google Colab 제공 GPU 비교표 (2025 기준)
+
+| GPU 모델| 아키텍처 |VRAM|성능(FP32 기준) |중고(2025년)| Colab 사용 비용 |
+|:--------|:---------|:----|:--------------|:-----------|:---------------------|
+|Tesla T4  |Turing (2018)|16GB |8.1 TFLOPS. 소형 모델   | 25~40만 원   | 무료 / Pro(9.99/mo) / Pro+(49.99/mo) |
+|Tesla V100|Volta (2017) |16-32GB|15.7 TFLOPS. 중형 모델| 60~100만 원 | Pro / Pro+       |
+|Tesla L4  |Ada Lovelace (2023) |24GB |30 TFLOPS 중대형 모델| 120~150만 원 | Pro / Pro+       |
+|Tesla A100|Ampere (2020) |40-80GB |19.5 TFLOPS. 대형 모델| 250~400만 원 | Pro+ (우선 할당) |
+
+
+* HP Z820 Upgrade
+    * GPU: Q K4000(3GB) => 1650(8.5만). 유튜브에 2080, 4070 설치한 HP Z820가 있음.  
+    * Storage: OS SSD=500MB, HDD=1TB HDD 
+    
+* HP Z440
+    * RAM: 16GBx4=64GB + 32GBx2=64GB(8만) = 128GB. memory fan(7만) 필요 
+    * 최종: 27만 + 6만(CPU) + 64GB RAM(8만) + HDD (1만) = 42만 
+    * GPU: Q M2000(4GB)은 cuDNN가능. => 3050(8g), 3060(12g), 4060(8g)  
+
+## GPU
+
+* gpu 설치순서
+    * 1단계: 해당 GPU를 지원하는 최신 Nvidia driver 확인
+    * 2단계: 드라이버가 지원하는 cuda toolkit버전과 cuDNN 버전 설치
+    * 3단계: tf, pt버전 설치 
+* Docker: 윈도우에 직접 설치하지 않고 gpu를 사용하려면 Docker 사용(권장)
+
+
+## R, Python
+* R과 파이썬은 서로 경쟁 상태임.
+* 파이썬: Rpy 패키지(주피터에서 R을 사용)
+* R: reticulate 패키지(R에서 파이썬 사용) 
+* 구글 tf/keras 패키지 사용방법
+     * 코랩: colab.research.google.com. 설치 필요없고 즉시 tf/keras 사용가능. 무료 GPU제공. 구글드라이브와 연동. 자원 제한. 코랩에서 R 사용가능하지만 파일읽기, 패키지 설치가 어려움(비추)
+     * Metal python: 로컬에 직접 파이썬 시스템 구축. 아나콘다/미니콘다 설치, tf/keras는 환경(env) 또는 conda 환경을 생성하고 사용
+     * Metal R: R에서 reticulate, tensorflow, keras패키지를 설치해서 사용
+
+## SW/HW 
+* 주의
+    * 영어 관리자계정(예:hhog)이 필요함. (한글 관리자계정 사용금지) 
+    * R, Rstudio, Rtools는 용량이 적음
+    * miniconda, tensorflow 등 파이썬 패키지는 용량이 큼. HDD 용량이 적으면 설치하지 말 것
+    * 설치시 가급적 백신프로그램의 실시간 감시를 끄고, 관리자 권한으로 설치 권장 
+
+* 하드웨어
+    * PC의 C드라이브에 용량 확인. C드라이브 용량이 적으면 설치하지 말고 그냥 colab 쓸 것
+    * 좋은 기계가 좋음(CPU도 빠르고, RAM도 많고, GPU도 고성능이면 좋음).
+    * R은 저사양이라도 잘 작동함. 대용량 자료가 아니면 실행에 큰 문제 없음
+
+* 운영체제 확인: CPU, RAM, OS정보 확인. 예: i7-10750H, 32GB, Windows 10 Home 22H2 
+   * [내PC] 오른쪽 클릭 > 속성 
+   * 윈도우 시작버튼 > 설정 > 시스템. 제일 아래 정보 
+
+* 하드웨어 정보: CPU의 코어수, HDD 용량, GPU여부 확인
+   * Ctrl-Shift-Esc: 작업관리자 실행. 성능선택 
+
+
+
+<!--
+* 방법1: R/Rstudio에서 reticulate만 설치. miniconda 그냥 설치. r-reticulate 환경 그냥 만들기     * Miniconda 3.10을 다운받아 설치하고 시작  
+
+
+* 방법1: R/RStudio => `install_miniconda()` => `r-reticulate`(tf2.16.1+keras3.3.0, pt-gpu 2.3.1). tfcpu와 ptgput 같이 사용 
+    * 4.4.1설치시 실패: An HTTP error occurred... 'https//conda.anaconda.org/conda-forge/noarch' => SSL 오류라고 함. 
+    * 구태여 R에서 miniconda를 설치할 필요없음 
+-->
+
+## 제거 
+### R/RStudio 제거 
+* 제어판 > 프로그램 제거 Rtools, Rstudio, R 제거
+* 다음은 선택사항 (이전 설치된 패키지나 데이터등을 완전히 삭제하려면 실행)
+    * 참고: AppData는 숨겨진 폴더이므로 보기 > 숨겨진 항목을 체크해야 보임
+    * C:/Users/hhog/Documents 또는 내PC > 문서에서 .RData, .Rhistory 제거 
+    * C:/Users/hhog/AppData/Local 안의 R, r-miniconda, r-reticulate, RStudio 등 제거
+    * C:/Users/hhog/AppData/Roaming/RStudio 제거
+    * C:/Program Files/R, C:/Program Files/RStudio, C:/rtools43 확인 후 남아있으면 폴더 제거
+    
+
+&nbsp;|4.2.x: C:/Users/hhog/Documents에 설치됨|4.3.x: C:/Users/hhog/AppData에 설치됨
+:--------------|:--------------------|:--------------------
+사용자 데이터(.RData) 저장위치|C:/Users/hhog/Documents|C:/Users/hhog/Documents
+사용자 설치패키지 위치|C:/Users/hhog/Documents/R/win-library|C:/Users/hhog/AppData/Local/R/win-library
+
+
+### Anaconda 제거(선택사항)
+* 아나콘다 제거: 깔끔하게 제거되지 않을 수 있음. 약 30 GB(tf포함)
+* 개인용(권장)이면 C:/Users/hhog/anaconda3, 전체용이면 C:/ProgramData/anaconda3에 설치됨. 개인용 설치 권장
+* C:/Users/hhog/anaconda/envs나 pkgs 폴더는 미리 제거할 것
+* 윈도우 제어판의 프로그램 제거로 아나콘다 제거
+* 또는 conda로 제거
+
+```
+conda install anaconda-clean
+anaconda-clean --yes   # 사용자파일은 C:/Users/hhog/.anaconda_backup 에 백업됨
+```
+
+
+## 설치 
+
+### 다운로드:
+* miniconda 최신버전
+* R download 검색: R 4.5.2 (R-4.5.2-win.exe) 
+* Rstudio download, 또는 RStudio Desktop download 검색: RStudio-2025.09.2-418.exe
+* RTools  검색: Rtools45 installer 다운받아 설치(C:\rtools45, rtools45-6691-6492.exe). R패키지 컴파일을 위한 C 컴파일러 
+
+### miniconda 설치
+* 이전 설치는 제거
+* miniconda 다운로드 (Miniconda3-latest-Windows-x86_64.exe)
+* 설치 (Just Me로 설치하면 C:/Users/hhog/miniconda3에 설치됨). 작업표시줄에 Anaconda prompt (miniconda) 고정. 사용방법은 동일
+* r-reticulate 환경 생성하고 jupyter notebook과 일반 패키지 먼저 설치
+* miniconda설치시 [PATH를 추가]를 체크 
+* C:\Users\hhog\AppData\Local\r-miniconda\envs\r-reticulate\python 또는 
+
+#### 사후 처리
+* pip, conda는 파이썬 패키지를 설치하는 유틸리티.
+
+| 특징 | pip  | conda |
+|:---------|:---------|:-----------|
+| 패키지 관리 | PyPI(Python Package Index)에서 Python 패키지를 설치 및 관리 | Anaconda 환경에서 Python 패키지와 비-Python 패키지를 설치 및 관리 |
+| 환경 관리   | 별도의 도구 (virtualenv, venv)로 가상 환경 관리 | 자체 가상 환경 관리 기능 내장 |
+| 속도        | 더 빠른 설치 및 업데이트 | 다소 느린 설치 및 업데이트 (다운로드 속도와 패키지 크기에 따라 다름) |
+| 의존성 관리 | 의존성 충돌 해결이 어려울 수 있음 | 의존성 관리 및 해결에 강점 |
+| 사용성      | Python 패키지 설치에 주로 사용 | 데이터 과학, 머신러닝 등 다양한 분야에서 유용 |
+| 범용성      | Python에 특화 | Python 및 비-Python 패키지 모두 관리 가능 |
+| 패키지 소스 | PyPI | Anaconda Repository, conda-forge 등 |
+| 설치 용량   | 일반적으로 작은 설치 용량 | 다소 큰 설치 용량 (Anaconda 환경 포함 시) |
+
+
+* conda 가상환경 생성
+    * r-reticulate: tf 포함한 모든 데이터 분석 패키지 설치. ts도 포함
+	* pt: pt용
+	* ts: 통상적인 시계열 분석용
+	* nix: nixtla용 (pt가 같이 설치됨)
+
+```
+# Anaconda Prompt에서 
+(base) python --version                            # 현재 base에 설치된 파이썬 버전
+(base) conda env list                              # 가상환경 리스트. 최초 base만 있음
+(base) conda create -n r-reticulate python=3.11.11 # 파이썬 특정버전으로 가상환경 생성. 동의화면 때문에 install_miniconda로 설치 안됨
+
+Do you accept the Terms of Service (ToS) for https://repo.anaconda.com/pkgs/main? [(a)ccept/(r)eject/(v)iew]: a
+Do you accept the Terms of Service (ToS) for https://repo.anaconda.com/pkgs/r? [(a)ccept/(r)eject/(v)iew]: a
+Do you accept the Terms of Service (ToS) for https://repo.anaconda.com/pkgs/msys2? [(a)ccept/(r)eject/(v)iew]: a
+
+
+(base) conda activate r-reticulate                 # 가상환경 시작. 프롬프트가 바뀜 
+(r-reticulate) python --version #                  # base의 버전과 다름  
+(r-reticulate) conda install conda                 # 콘다 설치 
+(r-reticulate) python -m pip install --upgrade pip # pip 설치 
+```
+* 필요한 패키지 설치 1: tf 설치
+    * 주의: W10에서 tfgpu 사용못함. W10 tfgpu 2.10까지 gpu 지원. 2.11부터는 WSL용만 지원
+    * 윈도우에서 gpu사용하려면 1) docker를 사용하거나, 2) WSL를 사용
+    * tf2.10까지만 지원, 2.11부터는 WSL용만 지원 
+
+```
+pip install tensorflow   # tf 2.20 설치됨. gpu가 없으면 pip으로 가장 최신 cpu 버전 설치하면 됨 
+```
+
+* 필요한 패키지 설치 2: numpy, matplotlib, seaborn, scikit-learn, pandas
+
+```
+(r-reticulate) # conda install numpy     # tf와 충돌방지위해 설치 자제 
+(r-reticulate) conda install matplotlib    
+(r-reticulate) conda install seaborn       
+(r-reticulate) conda install scikit-learn  
+(r-reticulate) conda install pandas        
+(r-reticulate) conda install sktime-all-extras -c conda-forge 
+(r-reticulate) conda install pmdarima 
+(r-reticulate) conda install prophet  # sktime에서 이미 설치한 상태
+
+```
+
+
+
+* nixtla 설치 
+
+```
+
+```
+
+
+
+
+
+* 주피터 노트북 설치
+
+```
+# 주피터 노트북 설치: 
+# 현재 7.x대. 6.x(classic)대를 설치하면 각종 유틸리티 사용 편리. 
+# (r-reticulate) conda install notebook=6.5   # nb 6(classic) 설치. 6.5.7 
+# (r-reticulate) conda install -c conda-forge jupyter_contrib_nbextensions
+# (r-reticulate) conda install -c conda-forge jupyter_nbextensions_configurator
+(r-reticulate) conda install jupyter  # 최신 notebook, qtconsole, nbconvert, ipykernel 등 생태계 전체 설치
+(r-reticulate) conda install notebook # notebook만 설치
+
+# 작업폴더로 이동 
+(r-reticulate) D:                # D:로 이동
+(r-reticulate) cd GHUB           # D:\GHUB(작업 폴더)로 이동 
+(r-reticulate) jupyter notebook  # 실행. 브라우저에 주피터가 나옴
+```
+
+* 설치된 패키지 확인
+
+```
+!pip list -v                   # 설치된 패키지 리스트 
+!pip freeze > requirements.txt # 설치된 패키지 리스트를 파일로 저장 
+```
+
+* check_colab_packages.py (GPT작성) 설치된 패키지 확인용. 주피터에서 실행
+
+
+```
+# !pip list -v : 설치되어 있는 패키지 리스트
+libraries = [
+  ('numpy', 'numpy'),
+  ('scipy', 'scipy'),
+  ('pandas', 'pandas'),
+  ('scikit-learn', 'scikit-learn'), # pip install -U scikit-learn
+  ('statsmodels', 'statsmodels'),
+  ('tensorflow', 'tensorflow'),     # pip install tensorflow
+  ('keras', 'keras'),
+  # ('pytorch', 'pytorch'),         # pip install torch; pip install torchvision
+  ('matplotlib', 'matplotlib'),
+  ('seaborn', 'seaborn'), 
+  ('plotly', 'plotly') # pip install plotly[express], conda install -c conda-forge plotly
+]
+
+# 설치된 버전 확인 함수
+def check_and_install_lib(lib_name, lib_package):
+  try:
+    # 라이브러리 버전 출력
+    import importlib
+    lib = importlib.import_module(lib_name)
+    print(f'Y: {lib_name} v{lib.__version__}')
+  except ImportError:
+    print(f'N: {lib_name}')
+    # print(f'!pip install {lib_package}')
+    
+for lib_name, lib_package in libraries:
+  check_and_install_lib(lib_name, lib_package)    
+```
+
+* check01.py : 설치된 패키지 확인. 주피터에서 실행 
+
+```
+import sys 
+print(f'Python version: {sys.version}') 
+
+import numpy as np # scientific computing
+print(f'numpy version: {np.__version__}') 
+
+import scipy as sp 
+print(f'scipy version: {sp.__version__}') 
+
+import matplotlib 
+print(f'matplotlib version: {matplotlib.__version__}')
+
+import pandas as pd 
+print(f'pandas version: {pd.__version__}')  
+
+import sklearn 
+print(f'scikit-learn version: {sklearn.__version__}') 
+
+import gensim
+print(f'gensim version: {gensim.__version__}') 
+
+import statsmodels 
+print(f'statsmodels version: {statsmodels.__version__}') 
+
+import seaborn 
+print(f'seaborn version: {seaborn.__version__}') 
+
+import plotly
+print(f'plotly version: {plotly.__version__}')
+
+import tensorflow as tf
+print(f'tf version: {tf.__version__}')  
+
+from tensorflow import keras
+print(f'keras version: {keras.__version__}')
+
+if tf.test.gpu_device_name():
+    print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
+else:
+    print('Please install GPU version of TF')
+```
+
+
+* check02.py : 설치된 패키지 확인. 주피터에서 실행 
+
+```
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+DF = {'sx':['F','F','F','M','M','M'],
+      'ht':[159,161,165,173,177,180],
+      'wt':[59,61,62,68,72,82]}
+# pd.read_table('D:/GHUB/sample.txt', header=0, sep='\s+') 
+#                , dtype={'sx':str,'ht':float, 'wt':float})
+DF = pd.DataFrame(DF) 
+print(DF)
+print(DF.dtypes)
+
+DF_sx = DF.groupby('sx').describe()
+print(DF_sx)
+print(DF_sx.T)
+
+
+plt.plot(DF['wt'], DF['ht'], 'ro')
+
+import seaborn as sns
+sns.boxplot(data=DF, x='sx', y='ht')
+
+
+t = np.arange(0.0, 2.0, 0.1)
+s = 1 + np.sin(2*np.pi*t)
+plt.plot(t, s)
+plt.grid(True)
+sns.rugplot(t)
+print(t)
+print(s)
+
+
+import plotly.express as px
+px.line(x=t, y=s, markers=True) # px.scatter(x=t, y=s)
+```
+
+* check03.py : tf(cpu) 확인 (W11에서 gpu 사용불가. WSL로 사용해야 함). 주피터에서 실행 
+
+```
+# MNIST 테스트
+# import torch; print(torch.__version__); print(torch.cuda.is_available())
+
+import tensorflow as tf;print(tf.config.list_physical_devices('GPU'))
+import numpy as np
+
+mnist = tf.keras.datasets.mnist 
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0 
+
+model = tf.keras.models.Sequential([  
+          tf.keras.layers.Flatten(input_shape=(28, 28)),  
+          tf.keras.layers.Dense(128, activation='relu'),  
+          tf.keras.layers.Dropout(0.2),  
+          tf.keras.layers.Dense(10, activation='softmax')]) 
+          
+model.compile(optimizer='adam', 
+              loss='sparse_categorical_crossentropy', 
+              metrics=['accuracy']) 
+model.fit(x_train, y_train, epochs=5) 
+model.evaluate(x_test,  y_test, verbose=2)
+```
+
+### R/RStudio/Rtools 설치
+* 다운로드
+    * R download 검색: R 4.5.2 
+    * Rstudio download, 또는 RStudio Desktop download 검색
+    * RTools  검색: Rtools45 installer 다운받아 설치(C:\rtools45). R패키지 컴파일을 위한 C 컴파일러 
+
+
+### R 패키지 설치
+* 패키지는 리눅스에서는 `install.packages()`함수로 설치. W11에서는 RStudio > Tools > Install Packages로 설치권장
+* 권장 패키지: tidyverse, caret, tidymodels 등
+
+### R과 파이썬 연동
+* miniconda: Anaconda의 최소 설치
+* reticulate: R에서 파이썬 연동시켜주는 R패키지
+* R-Python 연동: 
+    * R에서 reticulate::install_miniconda()로 miniconda를 설치하면 r-reticulate 환경을 생성함 
+    * (권장) 이미 설치된 파이썬과 r-reticulate환경을 R에서 사용: (파이썬에 r-reticualte 환경을 생성했으면) reticulate::use_condaenv('r-reticulate')로 파이썬 연동가능
+
+* reticulate 설치하고 설치확인
+
+```
+library(reticulate)
+# py_discover_config()      # 사용가능한 파이썬 위치나 환경리스트 Null
+use_condaenv('r-reticulate')# miniconda에서 생성한 환경 
+py_run_string('print("Hello")')
+py_run_string('import sys; print(sys.version) ')  # reticulate내 파이썬 버전
+```
+
+* R에서 tensorflow, keras, keras3 패키지 설치(실제 tf, keras가 아니고 인터페이스 패키지임)
+* R을 재시작하고 설치확인. miniconda로 tf/keras를 r-reticulate 에 이미 설치했으므로 `install_tensorflow(), install_keras()`하지 말것 (실제 잘 설치 안됨)
+
+```
+library(reticulate)
+library(tensorflow)      # (X) install_tensorflow()  
+library(keras3)  # library(kera) # (X) install_keras() # pandas 등 설치. permission오류. 무시
+use_condaenv('r-reticulate')
+# py_run_string('import tensorflow; print(tensorflow.__version__)')  # 2.20 설치됨 
+```
+
+#### MNIST R로 실행하기
+
+mnist   <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test  <- mnist$test$x
+y_test  <- mnist$test$y
+
+# reshape
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test  <- array_reshape(x_test, c(nrow(x_test), 784))
+# rescale
+x_train <- x_train / 255
+x_test  <- x_test / 255
+
+
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+
+
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+  
+summary(model)
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+model %>% evaluate(x_test, y_test)
+
+#(depre) model %>% predict_classes(x_test)
+#(depre) model %>% predict_proba(x_test)
+## 성공 !!
+```
+
+
+<=============== 여기까지 
+
+
+<!--
+```
+library(reticulate)
+install_miniconda()  # C:/Users/hhog/AppData/Local/r-miniconda 에 설치함 (78MB). python 3.9
+use_condaenv('r-reticulate') # C:/Users/hhog/AppData/Local/r-miniconda/envs/r-reticulate 
+
+R에서 reticulate패키지 설치.
+reticulate를 로딩한 후 R에서 miniconda 설치
+사용가능
+py_run_string("x=10; print(x)")
+윈도우에서 미니콘다 사용하기
+윈도우 시작 > Miniconda3 (64bit) > Anaconda Prompt (r-minicoda) > 자세히. 작업표시줄에 고정후 클릭
+
+(base) C:\Users\hhog> python --version     # 3.12.1 C:\Users\hhog\AppData\Local\r-miniconda\python 
+Python 3.12.1
+
+(base) C:\Users\hhog> conda update conda   # base의 conda 업데이트
+
+(base) C:\Users\hhog> conda env list       # 사용가능한 환경 (base, r-reticulate가 있음)
+# conda environments:
+#
+                         C:\Users\hhog\AppData\Local\R-MINI~1
+                         C:\Users\hhog\AppData\Local\R-MINI~1\envs\r-reticulate
+base                  *  C:\Users\hhog\AppData\Local\r-miniconda
+r-reticulate             C:\Users\hhog\AppData\Local\r-miniconda\envs\r-reticulate
+
+
+(base) C:\Users\hhog> conda activate r-reticulate
+
+(r-reticulate) C:\Users\hhog> python --version # C:\Users\hhog\AppData\Local\r-miniconda\envs\r-reticulate\python
+Python 3.9.18
+
+(r-reticulate) C:\Users\hhog> conda install notebook=6.5.6  # nb 7 대신 nb 6(classic) 설치
+(r-reticulate) C:\Users\hhog> pip install --upgrade pip
+(r-reticulate) C:\Users\hhog> pip install tensorflow==       # 설치가능버전 리스트
+
+# 윈도우 네이티브 마지막 gpu 지원 버전 설치하려면 
+(r-reticulate) C:\Users\hhog> conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0 # 설치했으면 생략가능
+(r-reticulate) C:\Users\hhog> pip install "tensorflow<2.11"  # 윈도우네이티브 gpu설치
+(확인) python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+# 윈도우 네이티브 cpu버전 2.15.0 권장 
+(r-reticulate) C:\Users\hhog> pip install tensorflow==2.15.0 # 2.15.0-cp39 설치. gpu용은 2.10까지만 지원 
+(r-reticulate) C:\Users\hhog> python -c "import tensorflow as tf;print(tf.__version__)"   # double quote
+(r-reticulate) C:\Users\hhog> python -c "import tensorflow as tf;print(tf.config.list_physical_devices('GPU'))" 
+(r-reticulate) C:\Users\hhog> python -c "import tensorflow; print(tensorflow.__version__)" 
+(r-reticulate) C:\Users\hhog> (X after 2.14) python -c "from tensorflow import keras; print(keras.__version__)" 
+(r-reticulate) C:\Users\hhog> pip install chardet # 없으면 jupyter에서 오류발생함 
+
+(r-reticulate) C:\Users\hhog> pip list   # 종속성 조심 (numpy 1.26.4, pd, sk, pt 사용시 업그레이드 될 수 있고 충돌할 수 있음)
+Package                      Version
+---------------------------- --------
+absl-py                      2.1.0
+anyio                        4.2.0
+argon2-cffi                  21.3.0
+argon2-cffi-bindings         21.2.0
+asttokens                    2.0.5
+astunparse                   1.6.3
+attrs                        23.1.0
+backcall                     0.2.0
+beautifulsoup4               4.12.2
+bleach                       4.1.0
+cachetools                   5.3.3
+certifi                      2024.2.2
+cffi                         1.16.0
+charset-normalizer           3.3.2
+colorama                     0.4.6
+comm                         0.2.1
+debugpy                      1.6.7
+decorator                    5.1.1
+defusedxml                   0.7.1
+entrypoints                  0.4
+exceptiongroup               1.2.0
+executing                    0.8.3
+fastjsonschema               2.16.2
+flatbuffers                  23.5.26
+gast                         0.5.4
+google-auth                  2.28.1
+google-auth-oauthlib         1.2.0
+google-pasta                 0.2.0
+grpcio                       1.62.0
+h5py                         3.10.0
+idna                         3.4
+importlib-metadata           7.0.1
+ipykernel                    6.28.0
+ipython                      8.15.0
+ipython-genutils             0.2.0
+jedi                         0.18.1
+Jinja2                       3.1.3
+jsonschema                   4.19.2
+jsonschema-specifications    2023.7.1
+jupyter_client               7.4.9
+jupyter_core                 5.5.0
+jupyter-events               0.8.0
+jupyter_server               2.10.0
+jupyter_server_terminals     0.4.4
+jupyterlab-pygments          0.2.2
+keras                        2.15.0
+libclang                     16.0.6
+Markdown                     3.5.2
+MarkupSafe                   2.1.3
+matplotlib-inline            0.1.6
+mistune                      2.0.4
+ml-dtypes                    0.2.0
+nbclassic                    1.0.0
+nbclient                     0.8.0
+nbconvert                    7.16.2
+nbformat                     5.9.2
+nest-asyncio                 1.6.0
+notebook                     6.5.6
+notebook_shim                0.2.3
+numpy                        1.26.4
+oauthlib                     3.2.2
+opt-einsum                   3.3.0
+overrides                    7.4.0
+packaging                    23.1
+pandocfilters                1.5.0
+parso                        0.8.3
+pickleshare                  0.7.5
+pip                          24.0
+platformdirs                 3.10.0
+prometheus-client            0.14.1
+prompt-toolkit               3.0.43
+protobuf                     4.25.3
+psutil                       5.9.0
+pure-eval                    0.2.2
+pyasn1                       0.5.1
+pyasn1-modules               0.3.0
+pycparser                    2.21
+Pygments                     2.15.1
+python-dateutil              2.8.2
+python-json-logger           2.0.7
+pywin32                      305.1
+pywinpty                     2.0.10
+PyYAML                       6.0.1
+pyzmq                        24.0.1
+referencing                  0.30.2
+requests                     2.31.0
+requests-oauthlib            1.3.1
+rfc3339-validator            0.1.4
+rfc3986-validator            0.1.1
+rpds-py                      0.10.6
+rsa                          4.9
+Send2Trash                   1.8.2
+setuptools                   69.1.1
+six                          1.16.0
+sniffio                      1.3.0
+soupsieve                    2.5
+stack-data                   0.2.0
+tensorboard                  2.15.2
+tensorboard-data-server      0.7.2
+tensorflow                   2.15.0
+tensorflow-estimator         2.15.0
+tensorflow-intel             2.15.0
+tensorflow-io-gcs-filesystem 0.31.0
+termcolor                    2.4.0
+terminado                    0.17.1
+tinycss2                     1.2.1
+tornado                      6.3.3
+traitlets                    5.7.1
+typing_extensions            4.9.0
+urllib3                      2.2.1
+wcwidth                      0.2.5
+webencodings                 0.5.1
+websocket-client             0.58.0
+Werkzeug                     3.0.1
+wheel                        0.42.0
+wrapt                        1.14.1
+zipp                         3.17.0
+확인용 R스크립트
+library(reticulate)
+use_condaenv('r-reticulate') 
+library(tensorflow)  # tf로딩 정보 나옴 
+library(keras)      
+
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+
+# reshape
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+# rescale
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+
+
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+  
+summary(model)
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+model %>% evaluate(x_test, y_test)
+
+#(depre) model %>% predict_classes(x_test)
+#(depre) model %>% predict_proba(x_test)
+## 성공
+(참고) conda로 환경을 만들면서 tf를 설치할 수 있음 (tf버전 다를 수 있음)
+C:\WORK> conda update conda
+C:\WORK> conda env list 
+C:\WORK> conda activate r-reticulate 
+(r-reticulate) C:\WORK> python  --version
+(r-reticulate) C:\WORK> conda install notebook=6.5.6
+(r-reticulate) C:\WORK> conda install notebook=6.5.6
+
+C:\WORK> conda create -n tf tf  # 환경 tf에 tensorflow(keras포함)를 설치함
+C:\WORK> conda activate tf      # 환경 tf 활성화. (tf)로 프롬프트가 바뀜 
+C:\WORK> conda install pywin32    # 윈도우에 필요한 패키지 설치 
+C:\WORK> conda install jupyterlab # 환경 tf에 주피터 설치. 설치 안하면 (base) 주피터가 실행됨
+C:\WORK> python --version  # 환경 tf에 설치된 파이썬의 버전 
+C:\WORK> python # 파이썬 진입
+>> import tensorflow
+>> tensorflow.__version__  # 설치 성공했으면 설치된 버전이 나옴
+>> from tensorflow import keras
+>> keras.__version__  # 설치 성공했으면 설치된 버전이 나옴
+>> quit()
+
+C:\WORK> pip install pandas matplotlib sklearn seaborn # 환경 tf에 다시 설치해야 함
+C:\WORK> jupyter notebook # 실행 
+pytorch 설치
+python https://pytorch.org/get-started/locally/ 에서 선택 (pt 2.2.1 성공)
+# GPU가 있고 윈도우용 CUDA가 설치된 경우 CUDA버전 확인 
+(r-reticulate) C:\Users\hhog> nvidia-smi # CUDA V 12.3 확인. pt사이트는 12.1만 지원 12.1로 설치  
+
+# pytorch install로 검색해서 설치 사이트 접속. 환경에 맞는 버전 선택
+# GPU가 있으면 Stable, Windows, Conda, Python, CUDA 12.1 
+# GPU가 없으면 Stable, Windows, Conda, Python, CPU 
+# 선택하면 설치명령이 생성되고 복붙해서 실행
+(r-reticulate) C:\Users\hhog> conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+(r-reticulate) C:\Users\hhog> python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
+-->
+
+
+
+
+
+## W10 r-reticulate+tfcpu+ptgpu 
+
+* r-reticulate에 tf, pt 함께 설치
+
+### r-reticulate에 tfcpu 2.16 설치 
+
+* 결론: W10에서 tfgpu 사용못함:  W10용 tfgpu 2.10이 마지막 버전임. WSL용만 지원
+    * tf2.10까지만 지원, 2.11부터는 WSL용만 지원 
+    * Docker에서 R/Python/TF를사용하는 것 권장 
+    
+
+ 
+```
+(r-reticulate) pip install --upgrade pip
+(r-reticulate) pip install tensorflow     # 최신 버전 2.16.1+keras 3.3.3 설치. gpu용은 2.10까지만 지원 
+(r-reticulate) python -c "import tensorflow as tf;print(tf.__version__)"   # double quote
+(r-reticulate) python -c "import tensorflow as tf;print(tf.config.list_physical_devices('GPU'))" 
+(r-reticulate) (X after 2.14) python -c "from tensorflow import keras; print(keras.__version__)" 
+# (XX) (r-reticulate) pip install chardet # 없으면 jupyter notebook에서 오류
+
+(r-reticulate) jupyter notebook # 노트북에서도 tf가 되는지 확인할 것
+(r-reticulate) pip list   # 설치된 패키지의 종속성 조심 
+(r-reticulate) python test-mnist-tf.py 
+```
+
+
+### r-reticulate에서 pytorch 2.3.1 설치
+* r-reticulate에 tf 2.16.1과 pt 2.3.1을 같이 설치할건지 결정해야 함. 충돌 위험 
+* python https://pytorch.org/get-started/locally/ 에서 선택 (pt 2.3.1 + CUDA 12.1)
+    * pt는 윈도우에 최신 드라이버만 있으면 됨. 나머지 파일(toolkit이나 cuDNN)은 알아서 설치함
+
+
+```
+# GPU가 있고 윈도우용 CUDA가 설치된 경우 CUDA버전 확인 
+conda activate r-reticulate
+(r-reticulate) nvidia-smi # Dr version: 546.17, CUDA version 12.3(권장버전이고 설치된 것 아님) 
+(r-reticulate) nvcc --version # 설치된 TK version: 11.2 (실제 설치된 버전임. 설치 안해도 됨) 
+
+# pytorch install로 검색해서 설치 사이트 접속. 환경에 맞는 버전 선택
+# GPU가 있으면 Stable, Windows, Conda, Python, CUDA 12.1
+# GPU가 없으면 Stable, Windows, Conda, Python, CPU 
+# 선택하면 설치명령이 생성되고 복붙해서 실행
+(r-reticulate) conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+(r-reticulate) python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
+
+# 성공
+```
+
+
+
+
+### W10 R/Rstudio/Rtools 설치
+* R download 검색: R 4.4.1 설치 (4.4.0은 leaflet이 안된다는 소문??)
+* Rstudio download, 또는 RStudio Desktop download 검색: RStudio-2024.04.2-764.exe
+* RTools  검색: RTools44> Rtools44installer 다운받아 설치(C:\rtools44, ~500MB). R패키지 컴파일을 위한 C 컴파일러 
+* 일반 개별패키지 설치:`tidyverse, caret, tidymodels` 등 (install-packages.Rmd를 Knitr)
+
+### W10 R/Rstudio에서 Miniconda 활용
+* R 필요없으면 아나콘다만 설치하고 사용
+* R에 miniconda를 설치했고 r-reticulate환경(이름은 사용자가 정하면 됨)이 있으면 그대로 사용가능
+    * r-reticulate에 tfcpu(W10용 tf최신버전 2.16.1은 cpu만 지원), ptgpu를 설치했으면 그대로 사용가능
+    * R에서 reticulate, tensorflow, keras3 패키지 설치
+<!--
+* R에서 tf를 사용하려면 R안에서 miniconda를 설치하면 편리함 (4.4.1에서 오류발생해서 minconda를 단독 설치 권장) 
+    * `install_miniconda`로 설치하면 `r-reticulate` 환경이 자동 생성됨. => 위와 같이 직접 생성함
+    * `r-reticulate`환경에 패키지 설치하면 R과 Python 둘 다 사용가능
+    * 새로운 환경을 만들어 사용가능 
+-->
+
+* 확인
+
+```
+library(reticulate)
+# miniconda 설치했으면 생략: install_miniconda()  # C:/Users/hhog/AppData/Local/r-miniconda에 설치 
+use_condaenv('r-reticulate') # C:/Users/hhog/AppData/Local/r-miniconda/envs/r-reticulate 사용
+py_run_string("x=10; print(x)")
+```
+
+## W10 r-reticulate+tfcpu+ptgpu 
+
+* r-reticulate에 tf, pt 같이 설치해도 됨 (위 참고) 
+* 확인용 R스크립트 
+     * r-reticulate에 tf 2.16을 설치했다면 tensorflow, keras3 라이브러리 설치할 것
+     * r-reticulate에 tf 2.15을 설치했다면 tensorflow, keras 라이브러리 설치할 것 
+     * (2024통소 Q&A참고: 2.16 + keras하면 to_categorical 오류발생. 2.16+kera3으로 설치해야 작동함) 
+
+```
+library(reticulate)
+library(tensorflow)  # tf로딩 정보 나옴 
+library(keras3)      
+
+use_condaenv('r-reticulate')  
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test  <- mnist$test$x
+y_test  <- mnist$test$y
+
+# reshape
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test  <- array_reshape(x_test, c(nrow(x_test), 784))
+# rescale
+x_train <- x_train / 255
+x_test  <- x_test / 255
+
+
+y_train <- to_categorical(y_train, num_classes=10)  # 2.15+r:keras면 사용되지 않은 인자 오류발생
+y_test  <- to_categorical(y_test, 10)
+
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+  
+summary(model)
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+model %>% evaluate(x_test, y_test)
+
+#(depre) model %>% predict_classes(x_test)
+#(depre) model %>% predict_proba(x_test)
+## 성공
+```
+
+### r-reticulate에서 pytorch 2.3.1 설치
+* r-reticulate에 tf 2.16.1과 pt 2.3.1을 같이 설치해도 됨 
+* python https://pytorch.org/get-started/locally/ 에서 선택 (pt 2.3.1 + CUDA 12.1)
+    * pt는 윈도우에 최신 드라이버만 있으면 됨. 나머지 파일(toolkit이나 cuDNN)은 알아서 설치함
+
+
+
+<!--
+* [참고1: 공식사이트 설명 2023.6.24](https://21june.tistory.com/2)
+* [X 참고2](https://medium.com/dawn-cau/wsl2-%EB%94%A5%EB%9F%AC%EB%8B%9D-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0-95d7b95d1f4b)
+* [참고3 cuda삭제법](https://blog.naver.com/PostView.naver?blogId=thehermitnation&logNo=223062270819)
+
+
+
+```
+# MNIST 테스트
+# pip install -U Pillow # 업데이트해야 설치됨. import_imaging as .. DLL load failed
+# https://github.com/pytorch/examples/tree/main/mnist 의 main.py를 프롬프트에서 실행. 성공 
+
+
+
+# test-tfcpu.py 성공 
+# !pip install chardet
+# import torch; print(torch.__version__); print(torch.cuda.is_available())
+import tensorflow as tf;print(tf.config.list_physical_devices('GPU'))
+import numpy as np
+
+mnist = tf.keras.datasets.mnist 
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0 
+
+model = tf.keras.models.Sequential([  
+          tf.keras.layers.Flatten(input_shape=(28, 28)),  
+          tf.keras.layers.Dense(128, activation='relu'),  
+          tf.keras.layers.Dropout(0.2),  
+          tf.keras.layers.Dense(10, activation='softmax')]) 
+          
+model.compile(optimizer='adam', 
+              loss='sparse_categorical_crossentropy', 
+              metrics=['accuracy']) 
+model.fit(x_train, y_train, epochs=5) 
+model.evaluate(x_test,  y_test, verbose=2)
+
+# (Solved) 
+# 주의: matplotlib설치 불안정. DLL load failed while importing _imaging 오류 
+# Pillow 10.2를 10.1로 다운그레이드하고 matplotlib을 pip으로 설치해서 성공
+# conda install pillow==10.1.0
+# pip install matplotlib 
+
+import pandas as pd
+import matplotlib.pyplot as plt
+DF = {'sx':['F','F','F','M','M','M'],
+      'ht':[159,161,165,173,177,180],
+      'wt':[59,61,62,68,72,82]}
+# DF = pd.read_table('C:/WORK/sample.txt', header=0, sep='\s+') #, dtype={'sx':str, 'ht':float, 'wt':float})
+
+DF = pd.DataFrame(DF) 
+print(DF)
+print(DF.dtypes)
+
+DF_sx = DF.groupby('sx').describe()
+print(DF_sx)
+print(DF_sx.stack())
+
+plt.plot(DF['wt'], DF['ht'], 'ro')
+plt.show()
+
+t = np.arange(0.0, 2.0, 0.1)
+s = 1 + np.sin(2*np.pi*t)
+print(t)
+print(s)
+
+plt.plot(t,s)
+plt.grid(True)
+plt.show()
+
+# 사용하는 envs에서 QT plugin이 있는 경로를 지정해야 함. 사용자마다 다름 
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/hhog/anaconda3/envs/tf/Library/plugins'
+# %matplotlib inline # 주피터 노트북에서 그림을 볼때 사용
+# import matplotlib
+# 한글깨짐방지. 나눔고딕이 설치되어 있어야 함
+# matplotlib.rcParams['font.family'] = 'NanumGothic'  
+# print('matplotlib version:', matplotlib.__version__, '\n')
+
+import seaborn as sns
+sns.boxplot(data=DF, x='sx', y='ht')
+```
+
+
+<!--
+* 참고
+   * [Installing both tensorflow and pytorch with gpu support](https://discuss.pytorch.org/t/installing-both-tensorflow-and-pytorch-with-gpu-support/160087/3)
+   * [Install TensorFlow and PyTorch with CUDA, cUDNN, and GPU Support in 3 Easy Steps, Docker 사용법](https://gretel.ai/blog/install-tensorflow-with-cuda-cdnn-and-gpu-support-in-4-easy-steps)
+   * [What versions of CUDA and CuDNN are required for Tensorflow 2.16?. 2.16 문제점](https://discuss.tensorflow.org/t/what-versions-of-cuda-and-cudnn-are-required-for-tensorflow-2-16/24711/5)
+
+
+```
+
+
+
+* [docker](https://gretel.ai/blog/install-tensorflow-with-cuda-cdnn-and-gpu-support-in-4-easy-steps)
+
+```
+curl https://get.docker.com|sh 
+sudo systemctl --now enable docker
+ 
+# Enable docker to run without root permissions
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+
+
+
+# 확인
+sudo docker run hello-world   # 성공 
+```
+-->
+
+
+
+
+<!--
+
+# (단순) 자동으로 인식해서 설치.  # 535-server를 설치하는 듯 (오래 걸림). 설치후 재부팅. nvidia-smi로 확인
+sudo ubuntu-drivers install --gpgpu 
+
+# 드라이버는 코랩 기준설치할 것. 최신 버전 무시 
+sudo ubuntu-drivers autoinstall      # 어느 버전이 설치될 지 모름. sudo ubuntu-drivers install 또는 sudo ubuntu-drivers install nvidia:535
+sudo apt install nvidia-driver-470   # 특정버전 설치  코랩:535.104.05, 최신 550.90.07 
+
+
+https://kr.download.nvidia.com/XFree86/Linux-x86_64/550.90.07/NVIDIA-Linux-x86_64-550.90.07.run
+
+```
+-->
+
+
+
+
+```
+(Colab) cat /usr/include/cudnn_version.h|grep CUDNN_MAJOR -A 2  # 8.9.6 
+# (WSL) cat /usr/local/cuda/include/cudnn_version.h|grep CUDNN_MAJOR -A 2
+python3 -c 'import tensorflow as tf; print(tf.__version__)'  
+```
+
+<!--
+
+* [우분투: 드라이버-TK 12.0-cuDNN 8.9.7-venv-tf2.15-tensorrt](https://medium.com/@chavezgm2012/installing-tensorflow-2-12-with-gpu-support-on-ubuntu-22-04-250429035e63)
+* [WSL2-Ubuntu-Miniconda-conda-pip[and-cuda]-](https://medium.com/@momchilbattlenet/simple-guide-for-installing-tensorflow-gpu-version-on-wsl2-7e8aec2e3001)
+    * PC에서 게임 레디 드라이버 설치
+    * PC상에서 TK, cuDNN 설치금지. WSL에서 직접 다운로드함. 
+    * wsl 실행
+    * nvidia-smi로 드라이버 버전 확인. CUDA 버전은 권장버전이고 설치버전이 아님. 그런데 WSL이 알아서 설치함
+    * Miniconda설치
+    * conda create --name tfgpu python=3.10
+    * conda activate tfgpu
+    * pip install --upgrade pip; pip install tensorflow[and-cuda]==2.15.1
+    * python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+    * vscode연결
+--> 
+
+
+
+## PC install
+
+* SS 2060 기준 
+* Nvidia 드라이버만 설치하고 진행. toolkit, cuDNN 은 나중에 설치
+
+
+&nbsp;|설치방법|R/RStudio|tf|pt
+:--|:---------|:-----|------|---------
+W10|R에서 miniconda+reticulate로 설치|gpu사용불가|gpu 2.10만 가능|gpu 사용가능
+WSL|WSL에서 Ubuntu처럼 설치|gpu사용불가|gpu 2.15|gpu 사용가능
+
+     
+* R/RStudio => r-miniconda => r-reticulate(tf2.16.1+keras3.3.0, pt-gpu 2.3.1). tfcpu와 ptgput 같이 사용 
+
+
+## Hardware 
+
+
+
+항목|dasci(210.121.131.73)|stats(210.121.131.59)|202.20.119.71(X)|MS Server(X)|HP Victus|SS
+:---|:-------------|:------------|:---------|:------------|:------------|:-----------
+Start|2021.1.20   |2017.4 |2011.1 |2014.2|2023.11
+CPU|4214R @2.4|E5-2640v4 @2.4|E5620 @2.4|E5-2630v2 @2.6|i5-12500H @2.5~4.5|i7-10750H @2.6~5.0
+Score|18324|12324|3256|8811|21577|12018  
+Cr,Th|48T=2&times;12C&times;2|40T=2&times;10C&times;2|8T=2&times;2C&times;2|24T=2&times;6C&times;2|16T=4C/8T+8C/8T|6C/12T
+RAM|128=32&times;4 (DDR4)|96 (DDR3 1333 8&times;12)|&nbsp;|64 (DDR3 1600 16&times;4)|32 DDR4|32 DDR4
+SSD|SS 970 EvoPlus 1TB|In 480GB, SS 256GB|Not Available|Not Available|SS Gen4 512GB|SS 512GB
+HDD|4TB SATA3|Toshiba 4TB SATA|1TB SATA|2TB SATA|N/A|N/A
+OS |Ubuntu 22.04.3|Ubuntu 20.04.1|CentOS 6.7|MS|W11+WSL|W10+WSL
+Ben|17949|15246|4448|9242||
+GPU|RTX3080, Ampere|N/A|N/A|N/A|RTX4060, AdaLovelace|RTX2060, Turing
+nCUDA|8704||||3072|1920
+vRAM|GDDR6X 12GB, 384bit||||GDDR6 8GB, 128bit|GDDR 6GB, 192bit
+Ben|81820||||69019|54035
+
+* 윈도우관련 50GB + 윈도우분석시스템 50GB + WSL분석시스템 50GB + 분석공간 50GB + 저정공간 50GB = 250GB. 200GB여유 
+* Nvidia driver는 최신판 윈도우용 설치할 것
+    
+### GPU
+
+* gpu를 활용하려면 설정해야함. R과 sk는 gpu 지원하지 않음 
+* Docker(가상기계와 유사. 콘테이너): 윈도우에 직접 설치하지 않고 gpu를 사용하려면 Docker이미지 사용(권장)
+
+
+## WSL 
+* [MS 공식 wsl faq](https://learn.microsoft.com/en-us/windows/wsl/faq)
+* 명령요약
+
+```
+wsl --status          # 설치된 가상머신
+wsl --update          # wsl 업데이트 
+wsl --shutdown        # 또는 wsl --terminate Ubuntu  
+wsl --list --verbose  # wsl -l -v
+```
+
+* Distro Export/Import
+
+```
+# https://4sysops.com/archives/export-and-import-windows-subsystem-for-linux-wsl/
+# 내보내기. tar크기가 설치한 내용과 거의 같음 (38GB). 압축해도 소용없음
+wsl --export Ubuntu C:\Temp\Ubuntu4DS.tar
+```
+
+* Remove Distro
+
+```
+wsl --unregister Ubuntu  # reset, but it won’t be uninstalled
+# 윈도우 앱에서 Ubuntu를 찾아 제거
+# (참고) winget uninstall --id Ubuntu : 완전제거는 저작권에 동의해야 함 
+```
+
+
+
+
+
+
+* reboot = exit + `wsl --shutdown + wsl -d Ubuntu -u kilropy` 
+    * wsl 중단: logout후 `wsl --shutdown` (모든 VM 중단) 또는 `wsl --terminate Ubuntu`(해당 VM 중단 ) 
+    * wsl 시작: `wsl -d Ubuntu -u kilroy` 
+
+
+
+### WSL 제거
+
+* [3 Methods to uninstall Ubuntu from WSL](https://linuxsimply.com/linux-basics/os-installation/wsl/wsl-uninstall-ubuntu/)
+
+```
+wsl --list --verbose
+wsl --unregister Ubuntu
+# 윈도우 돋보기에서 Ubuntu앱을 찾아 제거
+```
+
+
+### WSL 설치
+
+
+```
+wsl --install
+
+Installing, this may take a few minutes...
+Please create a default UNIX user account. The username does not need to match your Windows username.
+For more information visit: https://aka.ms/wslusers
+Enter new UNIX username:
+New password:
+Retype new password:
+passwd: password updated successfully
+Installation successful!
+
+kilroy@info4590-80:~$  lsb_release -a    # 배포판 정보 22.04.3 LTS 
+kilroy@info4590-80:~$  sudo passwd root  # root 비번 지정
+```
+
+
+### WSL 한글입력기 설치
+* WSL상에서 한글을 먼저 설치, 설정한 이후 xfce4를 설치해야 순조롭게 GUI가 한글화됨
+* [AAA WSL2 Ubuntu 한글화 설정 2023.10.21](https://datanavigator.tistory.com/60)
+
+* 요약
+
+```
+sudo apt update && sudo apt full-upgrade
+sudo apt-get install fonts-nanum*   # 한글폰트 설치
+sudo dpkg-reconfigure locales       # 텍스트 GUI 방식 언어지정. kr.UTF-8  선택
+exit                                # reboot = exit + wsl --shutdown
+locale                              # KR.UTF-8으로 변경되었는지 확인
+
+sudo apt update && sudo apt-get update
+sudo apt install fcitx fcitx-hangul fonts-noto-cjk dbus-x11  # 한글입력기 설치
+im-config                           # 한글입력기 지정
+
+
+vi ~/.bashrc                        # 수정 제일 마지막에 아래 6줄 추가
+export QT_IM_MODULE=fcitx
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export DefaultIMModule=fcitx
+#optional
+fcitx-autostart &>/dev/null
+
+
+source ~/.bashrc
+
+# Desktop용 한글지정 
+sudo apt install language-selector-gnome
+sudo gnome-language-selector  # (오류나면) sudo /etc/init.d/dbus start
+
+
+# 재부팅후
+fcitx-config-gtk3
+```
+
+
+### WSL xfce4 설치 
+
+* [Ubuntu 22.04 Server에 GUI 설치. LightDM, gdm, xfce 등 비교](https://junorionblog.co.kr/ubuntu-22-04-server%EC%97%90-gui-%EC%84%A4%EC%B9%98/)
+* gdm(Ubuntu Gnome Desktop)은 리소스 많이 사용하고 불안정하여 포기  
+
+
+
+```
+# X11설치: 공간부족시 여기까지 만 실행 
+sudo apt update && sudo apt full-upgrade
+sudo apt install x11-apps
+xeyes &  # test
+
+# xfce4 설치
+sudo apt install -y xrdp xfce4 xfce4-goodies
+sudo cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.bak
+sudo sed -i 's/3389/3390/g' /etc/xrdp/xrdp.ini
+sudo sed -i 's/max_bpp=32/#max_bpp=32\nmax_bpp=128/g' /etc/xrdp/xrdp.ini
+sudo sed -i 's/xserverbpp=24/#xserverbpp=24\nxserverbpp=128/g' /etc/xrdp/xrdp.ini
+echo xfce4-session > ~/.xsession
+
+# 중요 
+sudo vi /etc/xrdp/startwm.sh # 아래 2줄을 제일 앞에 추가할 것(<=blank 화면방지)
+unset DBUS_SESSION_BUS_ADDRESS
+unset XDG_RUNTIME_DIR
+startxfce4                   # 제일 마지막 줄에 추가할 것
+
+# sudo reboot
+# sudo /etc/init.d/xrdp start  
+
+# 윈도우 원격데스크톱으로 접속확인
+# localhost:3390  (blank화면만 나오면 startwm.sh 부분 확인할 것)
+# 한글로 나와야 함 
+```
+
+
+## WSL R/RStudio 
+
+### R latest
+* PC에 R/Rstudio가 설치되어 있으면 공간낭비이므로 생략
+* PC에서 r::tensorflow gpu사용하려면 권장 
+* 제거
+
+```
+# list packages installed/remove
+sudo apt list --installed
+sudo apt remove r-base r-base-core
+sudo apt remove r-base-core
+sudo apt autoremove   
+```
+
+* 최신버전 설치: `sudo apt install r-base`는 예전 버전(4.1.x)를 설치함 
+    * [공식 R: Ubuntu Packages For R - Brief Instructions](https://cran.r-project.org/bin/linux/ubuntu/)
+    * [How to Install R on Ubuntu, 2023.7.15](https://phoenixnap.com/kb/install-r-ubuntu)
+
+```
+sudo apt update -qq    # -qq: very quite
+sudo apt install --no-install-recommends software-properties-common dirmngr
+wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc|sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+gpg --show-keys /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+sudo apt install r-base r-base-dev -y
+
+# 확인 R실행 후 hist(rnorm(100))하면 X11에 나옴
+```
+
+
+### RStudio Server
+* [공식사이트 Download RStudio Server](https://posit.co/download/rstudio-server/)
+    * Debian/Ubuntu 22 선택시 설치 스크립트 나옴
+    * 포트:8787 공식사이트
+
+
+```
+sudo apt-get install gdebi-core
+wget https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb
+sudo gdebi rstudio-server-2024.04.2-764-amd64.deb
+
+# 접속확인: 로컬 웹브라우저에서 http://localhost:8787
+
+```
+
+
+## Miniconda
+
+* Miniconda 설치 (base에 3.12 설치되지만, env는 3.10 설치할 것)
+
+
+```
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm -rf ~/miniconda3/miniconda.sh
+~/miniconda3/bin/conda init bash  # 재부팅하면 (base) 보임 
+```
+
+
+
+## tfgpu 2.15.1 
+* (비추) tf 2.16.1: keras3 사용. `pip install tensorflow[and-cuda]`시 gpu를 잡지 못함. 수동 설치 비추
+* (추천) tf 2.15.1: `pip install tensorflow[and-cuda]==2.15.1` 시 gpu 관련부분 자동 설치함
+    * OS상에서 최신 nvidia driver(535 이상)만 설치되어 있으면 toolkit, cuDNN 자동 처리함
+* env에 사용하는 패키지(`sk, matplotlib, pandas`등)를 먼저 설치한 후 tf설치하면 충돌위험 감소 
+* [AAA WSL2에 CUDA 사용하는 Tensorflow 설치하는 방법. 20243.16](https://webnautes.tistory.com/1873)
+* [wsl2 Ubuntu Anaconda 가상환경에 TF, cudatoolkit, cudnn 설치하고 gpu 사용하기. 크롬설치](https://datanavigator.tistory.com/63)
+
+* 가급적 코랩과 동일한 조건이 되도록 설치
+
+&nbsp;|확인방법|코랩 버전
+:---|:--------------|:---------------
+OS version|`cat /etc/os-release`|Ubuntu 22.04.3 LTS
+Linux Kernel|`uname -r`|커널버전 6.1.85+. Ubuntu 22.04.4는 5.15.153.1 
+python|`python --version`|3.10.12. miniconda 기본은 3.12. env생성시 3.10.12 지정
+Nvidia Driver|`nvidia-smi`, `lspci|grep -i nvidia`|Dr Ver 535.104.05, CUDA Ver 12.2(권장버전. 설치아님) 
+CUDA Toolkit|`nvcc --version`|Cuda compilation tools 12.2.140 (tf 2.15용)
+cuDNN|`cat /usr/include/cudnn_version.h|grep CUDNN_MAJOR -A 2`|cuDNN 8.9.6
+gcc|`gcc --version`|gcc 11.4.0 
+tf|`import tensorflow as tf;tf.__version__`|2.15.0.  `pip install tensorflow[and-cuda]==2.15.1`로 설치할 것
+pt|Stable>Linux>Conda>Python>CUDA 12.1 로컬설치와 무관|
+
+
+
+
+```
+# env에서 conda 업그레이드 금지. python 3.12.3 으로 업그레이드해서 tf와 충돌: (X) conda update conda  
+# env에 3.12.3이 설치되었다면 다운그레이드할 것 conda install python=3.10.12
+
+# (제거) conda remove --name tfgpu --all
+conda update conda
+conda create -n tfgpu python=3.10.12
+conda activate tfgpu
+
+# jupyter notebook 설치
+conda install notebook=6.5 # 6.5.7 nb 7 대신 nb 6(classic) 설치
+conda install -c conda-forge jupyter_contrib_nbextensions
+conda install -c conda-forge jupyter_nbextensions_configurator
+# localhost만 허용. 외부 접속하려면 
+# jupyter notebook --no-browser --ip 210.121.131.73 --port=8888
+# remote에서 접속, 토큰 입력 http://210.121.131.73:8888/ 
+# 파일만들면 서버에 저장됨
+
+# 기본 패키지 미리 설치 
+conda install matplotlib seaborn scikit-learn pandas
+
+
+# 2.15.1 gpu 설치
+pip install --upgrade pip 
+pip install tensorflow[and-cuda]==2.15.1
+# (tensorrt 설치하면 tf 작동안함. XX) pip install --upgrade tensorrt
+
+# gpu 확인 
+python -c 'import tensorflow as tf; print(tf.config.list_physical_devices("GPU"))'
+```
+
+
+* 테스트: test-mnist-tf.py
+
+
+```
+# !pip install chardet
+# import torch; print(torch.__version__); print(torch.cuda.is_available())
+# import tensorflow as tf;
+import numpy as np
+import tensorflow as tf 
+print(tf.config.list_physical_devices('GPU'))
+
+mnist = tf.keras.datasets.mnist 
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0 
+
+model = tf.keras.models.Sequential([  
+          tf.keras.layers.Flatten(input_shape=(28, 28)),  
+          tf.keras.layers.Dense(128, activation='relu'),  
+          tf.keras.layers.Dropout(0.2),  
+          tf.keras.layers.Dense(10, activation='softmax')]) 
+          
+model.compile(optimizer='adam', 
+              loss='sparse_categorical_crossentropy', 
+              metrics=['accuracy']) 
+model.fit(x_train, y_train, epochs=5) 
+model.evaluate(x_test,  y_test, verbose=2)
+
+# 주의: matplotlib설치 불안정. DLL load failed while importing _imaging 오류 
+# Pillow 10.2를 10.1로 다운그레이드하고 matplotlib을 pip으로 설치해서 성공
+# conda install pillow==10.1.0
+# pip install matplotlib 
+
+import pandas as pd
+import matplotlib.pyplot as plt
+DF = {'sx':['F','F','F','M','M','M'],
+      'ht':[159,161,165,173,177,180],
+      'wt':[59,61,62,68,72,82]}
+# DF = pd.read_table('C:/WORK/sample.txt', header=0, sep='\s+') #, dtype={'sx':str, 'ht':float, 'wt':float})
+DF = pd.DataFrame(DF) 
+print(DF)
+print(DF.dtypes)
+
+DF_sx = DF.groupby('sx').describe()
+print(DF_sx)
+print(DF_sx.stack())
+
+plt.plot(DF['wt'], DF['ht'], 'ro')
+plt.show()
+
+t = np.arange(0.0, 2.0, 0.1)
+s = 1 + np.sin(2*np.pi*t)
+print(t)
+print(s)
+
+plt.plot(t,s)
+plt.grid(True)
+plt.show()
+
+# 사용하는 envs에서 QT plugin이 있는 경로를 지정해야 함. 사용자마다 다름 
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/hhog/anaconda3/envs/tf/Library/plugins'
+# %matplotlib inline # 주피터 노트북에서 그림을 볼때 사용
+# import matplotlib
+# 한글깨짐방지. 나눔고딕이 설치되어 있어야 함
+# matplotlib.rcParams['font.family'] = 'NanumGothic'  
+# print('matplotlib version:', matplotlib.__version__, '\n')
+
+import seaborn as sns
+sns.boxplot(data=DF, x='sx', y='ht')
+```
+
+* 참고: 드라이버, toolkit, cuDNN직접 설치가능하지만 충돌위험 높음
+
+<!-- 
+
+```
+# 기본값으로 설치하면 2.16가 설치되고 gpu 못잡음 
+# nvidia 공식사이트 방법
+# https://developer.nvidia.com/cuda-11.2.2-download-archive 가서 toolkit 다운로드 
+# Linux > x86_64 > WSL-Ubuntu > Version 2.0 > deb(local)
+sudo apt-key del 7fa2af80   # Remove nvidia outdated signing key 
+wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
+sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/12.2.2/local_installers/cuda-repo-wsl-ubuntu-12-2-local_12.2.2-1_amd64.deb  # 오래 걸림
+sudo dpkg -i cuda-repo-wsl-ubuntu-12-2-local_12.2.2-1_amd64.deb 
+sudo cp /var/cuda-repo-wsl-ubuntu-12-2-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda
+
+/usr/local/cuda/bin/nvcc -V  
+
+# cuDNN 8.9.6 for cuda 12.2.2 설치필요. 로그인해야 하므로 명령어로 다운못받는 듯. PC에 다운 받은 후 복사해서 사용   
+# https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.6/local_installers/12.x/cudnn-local-repo-ubuntu2204-8.9.6.50_1.0-1_amd64.deb/
+# https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.6/local_installers/12.x/cudnn-linux-x86_64-8.9.6.50_cuda12-archive.tar.xz/
+
+# Ubuntu에서. nvidia공식 사이트. 이제 필요없음. nvcc설치안해도 tf(2.15), pt 모두 알아서 처리함 
+# sudo apt-get install cuda-drivers-535
+# conda install cuda -c nvidia  #toolkit install => conda install cuda=12.2.2 -c nvidia
+# conda remove cuda
+```
+-->
+
+
+## ptgpu 2.3.1: 
+* nvidia driver만 설치되어 있으면 나머지는 알아서 설치함 
+
+
+```
+conda create -n ptgpu python=3.10.12
+conda activate ptgpu
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+python -c 'import torch; print(torch.__version__);print(torch.cuda.is_available())'  # True로 나옴
+# vscode 터미널에서 오른쪽 아래 Python('tfgpu')를 클릭해서 'ptgpu'로 변경해야 실행됨
+```
+
+
+## vscode 연결 
+* 확장: wsl Open any folder in the WSL 설치 
+    * 왼쪽 메뉴에 원격탐색기 아이콘 생김
+    * 파이썬 파일을 작성하고 우측 상단 [Python 파일 실행] 아이콘으로 실행하면 프롬프트상에서 실행함
+    * 아래 패널에 터미널이 나옴
+    * 하단 상태창에 활성화된 Python환경이 나옴. 환경을 바꾸면 이 부분을 클릭해서 Python Interpreter를 변경해야 함
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+## R, Python
+* R과 파이썬은 서로 경쟁 상태임.
+* 파이썬: 주피터에서 R을 사용할 수 있는 환경을 제공
+* R: reticulate 패키지를 통해 R에서 파이썬 사용가능
+* 구글 tf/keras 패키지 사용방법
+     * 코랩: colab.research.google.com. 설치 필요없고 즉시 tf/keras 사용가능. 무료 GPU제공. 구글드라이브와 연동. 자원 제한. 코랩에서 R도 사용가능하지만 파일읽기가 어려움(비추)
+     * Metal python: 기계에 직접 파이썬 시스템 구축. 아나콘다/미니콘다 설치, tf/keras 환경(env)생성
+     * Metal R: R에서 reticulate, tensorflow, keras패키지를 설치해서 사용
+
+
+## SW/HW 
+
+* 주의
+    * 영어 관리자계정(예:hhog)이 필요함. (한글 관리자계정 사용금지) 
+    * R,Rstudio,Rtools는 용량이 적음
+    * miniconda, tensorflow 등 파이썬 패키지는 용량이 큼. 본인의 하드디스크나 SSD 용량이 적으면 설치하지 말 것
+    * 설치시 가급적 백신프로그램의 실시간 감시를 끄고, 관리자 권한으로 설치할 것
+
+* 하드웨어
+    * 사용할 PC나 노트북의 C드라이브에 용량이 충분히 있어야 함. 특히 C드라이브 용량이 적은 노트북 사용자는 그냥 colab 쓸 것
+    * 좋은 기계가 좋음(CPU도 빠르고, RAM도 많고, GPU도 고성능이면 좋음).
+    * R은 저사양 기계에도 잘 작동함. 대용량 자료가 아니면 크게 문제 없음    
+
+* 운영체제 확인: CPU, RAM, OS정보 확인. 예: i7-10750H, 32GB, Windows 10 Home 22H2 
+   * [내PC] 오른쪽 클릭 > 속성 
+   * 윈도우 시작버튼 > 설정 > 시스템. 제일 아래 정보 
+
+* 하드웨어 정보: CPU의 코어수, 하드디스크 용량, GPU여부 확인
+   * Ctrl-Shift-Esc를 동시에 입력하여 작업관리자 실행. 성능선택 
+
+
+
+
+
+
+
+
+## WSL2
+* Docker for windows 에서 사용함 
+* 제거: 설정 > 앱 > 앱 및 기능 > Ubuntu > 제거  (2.68GB)
+* WSL제거: 설정 > 앱 > 앱 및 기능 > 선택적 기능 > 관련 설정 > 기타 Windows 기능(Windows 기능 켜기/끄기) > Linux용 Windows 하위시스템 끄기 > 재부팅 
+* 설치: 윈10 2004이상(빌드 19041 이상)  https://positivemh.tistory.com/589
+
+
+```
+wsl --install  # 자동설치
+wsl --list     # wslconfig /l   #리스트. 기본 Ubuntu, Docker가 있으면 Docker-desktop이 보임
+wslconfig /u Ubuntu  # Ubuntu 제거
+
+wsl --list --online  # 설치가능한 배포판 리스트
+
+'wsl.exe --install <Distro>'를 사용하여 설치합니다.
+NAME                                   FRIENDLY NAME
+Ubuntu                                 Ubuntu
+Debian                                 Debian GNU/Linux
+kali-linux                             Kali Linux Rolling
+Ubuntu-18.04                           Ubuntu 18.04 LTS
+Ubuntu-20.04                           Ubuntu 20.04 LTS
+Ubuntu-22.04                           Ubuntu 22.04 LTS
+OracleLinux_7_9                        Oracle Linux 7.9
+OracleLinux_8_7                        Oracle Linux 8.7
+OracleLinux_9_1                        Oracle Linux 9.1
+openSUSE-Leap-15.5                     openSUSE Leap 15.5
+SUSE-Linux-Enterprise-Server-15-SP4    SUSE Linux Enterprise Server 15 SP4
+SUSE-Linux-Enterprise-15-SP5           SUSE Linux Enterprise 15 SP5
+openSUSE-Tumbleweed                    openSUSE Tumbleweed
+
+또는 MS Store에서 linux 또는 ubuntu 로 검색후 설치
+
+
+설치후
+Enter new UNIX username: kilroy
+passwprd:
+
+kilroy@ubuntu: sudo passwd  # root 비번 설정
+
+  
+wsl --set-default-version 
+
+```
+    
+-->
+
+<!--
+### 예제 프로그램
+
+* check01.py
+
+
+```
+import os
+import sys
+print('Python version:', sys.version, '\n')
+
+import numpy as np
+print('numpy version:', np.__version__, '\n')
+
+import pandas as pd
+print('pandas version:', pd.__version__, '\n')
+
+import sklearn
+print('scikit-learn version:', sklearn.__version__, '\n')
+
+
+DF = pd.read_table('C:/WORK/sample.txt', header=0, sep='\s+')
+print(DF)
+
+DF_sx = DF.groupby('sx').describe()
+print(DF_sx)
+print(DF_sx.stack())
+```
+
+
+* check02.py
+
+```
+import os
+import sys
+print('Python version:', sys.version, '\n')
+
+import numpy as np
+print('numpy version:', np.__version__, '\n')
+
+import pandas as pd
+print('pandas version:', pd.__version__, '\n')
+
+import sklearn
+print('scikit-learn version:', sklearn.__version__, '\n')
+
+
+# 사용하는 envs에서 QT plugin이 있는 경로를 지정해야 함. 사용자마다 다름 
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/Users/hhog/anaconda3/envs/tf/Library/plugins'
+
+# %matplotlib inline # 주피터 노트북에서 그림을 볼때 사용
+import matplotlib
+
+# 한글깨짐방지. 나눔고딕이 설치되어 있어야 함
+matplotlib.rcParams['font.family'] = 'NanumGothic'  
+print('matplotlib version:', matplotlib.__version__, '\n')
+
+import seaborn as sns
+print('seaborn version:', sns.__version__, '\n')
+
+
+import matplotlib.pyplot as plt
+t = np.arange(0.0, 2.0, 0.1)
+s = 1 + np.sin(2*np.pi*t)
+print(t)
+print(s)
+
+plt.plot(t,s)
+plt.grid(True)
+plt.show()
+
+DF = {'sx':['F','F','F','M','M','M'],
+      'ht':[159,161,165,173,177,180],
+      'wt':[59,61,62,68,72,82]}
+# DF = pd.read_table('C:/WORK/sample.txt', header=0, sep='\s+') #, dtype={'sx':str, 'ht':float, 'wt':float})
+DF = pd.DataFrame(DF) 
+print(DF)
+print(DF.dtypes)
+
+DF_sx = DF.groupby('sx').describe()
+print(DF_sx)
+print(DF_sx.stack())
+
+plt.plot(DF['wt'], DF['ht'], 'ro')
+plt.show()
+
+plt.boxplot([DF[DF['sx']=='F']['wt'], DF[DF['sx']=='M']['wt']])
+plt.show()
+
+sns.boxplot(x='sx', y='ht', data=DF)
+plt.show()
+```
+
+
+
+* check03-tf.py : tf/keras를 이용한 MLP
+
+```
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tensorflow import keras
+
+## 강의중 틀린 부분
+## keras가 tensorflow에 완전히 포함되면서 액세스 방법이 바뀜
+from tensorflow.python.keras.utils import np_utils 
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+import pandas as pd
+import numpy as np
+
+
+DF = pd.read_csv('C:/WORK/iris.csv', encoding='utf-8')
+DF.head()
+
+DF = DF.rename(columns={'SepalLength':'SL',
+                        'SepalWidth':'SW',
+                        'PetalLength':'PL',
+                        'PetalWidth':'PL'})
+DF.head()
+
+DFX = DF.drop(['Species'], axis=1) 
+DFy = DF['Species'] 
+# 수준을 숫자로 코딩(반드시 0부터 시작할 것)
+DFy = np.where(DFy=='setosa', 0, np.where(DFy=='versicolor',1,2))
+
+TRX, TSX, TRy, TSy = train_test_split(DFX, DFy, train_size=0.8)
+
+
+
+# from tensorflow.keras.utils import to_categorical로 임포트하면 다음과 같이 
+# TRy = to_categorical(TRy)
+# TSy = to_categorical(TSy)
+# from tensorflow.python.keras.utils import np_utils로 임포트하면 다음과 같이 
+TRy = np_utils.to_categorical(TRy)
+TSy = np_utils.to_categorical(TSy)
+
+
+M1 = Sequential()
+M1.add(Dense(10, activation='relu', input_shape=(4,)))
+M1.add(Dense(3, activation='softmax'))
+
+M1.compile(
+    loss='categorical_crossentropy',
+    optimizer='adam',
+    metrics=['accuracy'])
+
+M1.fit(TRX, TRy,
+       batch_size=20,
+       epochs=100)
+
+score = M1.evaluate(TSX, TSy, verbose=1)
+print('Accuracy:', score[1], 'Loss=', score[0])
+```
+-->
